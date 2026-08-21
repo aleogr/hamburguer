@@ -74,7 +74,7 @@ tools/build-standalone.py   empacota tudo num HTML só (dist/, fora do git)
 | 1 | Hero | Vídeo em tela cheia, título subindo linha por linha, lanche em parallax |
 | 2 | Ticker | Faixa laranja em movimento contínuo |
 | 3 | A Maná | Texto acende palavra por palavra + contadores |
-| 4 | Especiais | Foto fixa à esquerda troca sozinha conforme o item entra na tela |
+| 4 | Especiais | Palco de tela cheia: o lanche fica ao fundo e troca conforme o painel de texto passa pelo meio |
 | 5 | Break | Madeira em parallax e chama, com a frase do X-Meio Quilo |
 | 6 | Tradicionais | Grade de sete cartões |
 | 7 | Combos | Grade de nove combos + porções |
@@ -89,12 +89,13 @@ da página alternando entre o marrom escuro e o creme conforme a seção.
 
 ## Trocando as imagens
 
-**As fotos vieram do PDF em baixa resolução** (o maior recorte tem 341 px). Dão
-conta no tamanho em que aparecem hoje, mas se você tiver os arquivos originais
-das fotos, prefira eles — é só substituir em `assets/img/` mantendo os nomes.
-O CSS já mostra os lanches com `object-fit: contain` sobre um fundo quente,
-porque são recortes com fundo transparente, e limita a largura para não
-esticar além do que a resolução aguenta.
+**As fotos vieram do PDF em baixa resolução** — o maior recorte tem 341 px, e
+na seção de especiais elas aparecem ocupando meia tela. Para aguentar esse
+tamanho, `tools/extract-cardapio.py` já as amplia com Lanczos e uma máscara de
+nitidez, o que evita a ampliação borrada que o navegador faria. Isso não cria
+detalhe que não existe: **se você tiver os arquivos originais das fotos,
+prefira eles** — é só substituir em `assets/img/` mantendo os nomes, e aí dá
+para soltar os limites de tamanho no CSS.
 
 Para reextrair tudo do PDF (se o cardápio mudar):
 
@@ -109,6 +110,17 @@ Ainda são placeholders em SVG, gerados por `tools/gen-placeholders.py`:
 
 **Vídeos.** Veja `assets/video/README.md` — tem os comandos de `ffmpeg`
 prontos. Enquanto não houver vídeo, o hero mostra uma brasa animada em canvas.
+
+## Como funciona o palco dos especiais
+
+O lanche ao fundo não é um `background-image`: é um bloco `position: sticky` de
+uma tela de altura, e o texto passa por cima dele. O truque é o `.stage__flow`
+ter `margin-top: -100svh`, sobrepondo exatamente a altura do palco.
+
+Cada lanche tem um painel de uma tela (`.panel`), então só um aparece por vez.
+Um `IntersectionObserver` com faixa estreita no meio da tela (`rootMargin`
+de -45% em cima e embaixo) decide qual foto acende. Mexer nesses dois números
+— a altura do painel e a largura da faixa — é o que ajusta o ritmo da troca.
 
 ## Paleta
 

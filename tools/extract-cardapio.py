@@ -11,32 +11,41 @@ Pixmap(base, mask) abaixo.
 
 Precisa de pymupdf e pillow:  pip install pymupdf pillow
 
-As imagens saem na resolução em que estavam no PDF, que é baixa (o maior
-lanche tem 379 px de altura). Se você tiver as fotos originais, prefira elas:
-é só substituir os arquivos em assets/img/ mantendo os nomes.
+No PDF as fotos são pequenas (o maior recorte tem 341 px). Como no site elas
+aparecem grandes, os recortes saem daqui já ampliados com Lanczos + máscara de
+nitidez — o que evita a ampliação borrada do navegador, mas não cria detalhe
+que não existe. Se você tiver as fotos originais, prefira elas: é só substituir
+os arquivos em assets/img/ mantendo os nomes.
 """
 import os
 import sys
 
 import pymupdf
-from PIL import Image
+from PIL import Image, ImageFilter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "assets", "img")
 
-# xref no PDF -> nome do arquivo. Os xrefs vêm da primeira página, que é a dos
-# especiais; as demais reaproveitam as mesmas imagens de fundo.
+# Os recortes dos lanches aparecem grandes no site (ocupam meia tela na seção
+# de especiais), mas no PDF têm menos de 350 px. Ampliar no navegador borra:
+# o Lanczos com uma máscara de nitidez em cima segura bem melhor a borda do
+# pão e o brilho do queijo. Não inventa detalhe que não existe — só evita que
+# a ampliação vire mingau.
+ALTURA_ALVO = 760      # px; nenhum recorte é ampliado além de MAX_FATOR
+MAX_FATOR = 2.8
+
+# xref no PDF -> (nome do arquivo, qualidade webp, ampliar?)
 IMAGENS = {
-    270: ("burger-classico", 88),
-    272: ("burger-hothoney", 88),
-    273: ("burger-queijos", 88),
-    271: ("burger-texas", 88),
-    275: ("burger-romeu", 88),
-    274: ("burger-big", 88),
-    276: ("burger-hero", 90),
-    277: ("logo-mana", 92),
-    268: ("textura-madeira", 76),
-    322: ("chama", 70),
+    270: ("burger-classico", 86, True),
+    272: ("burger-hothoney", 86, True),
+    273: ("burger-queijos", 86, True),
+    271: ("burger-texas", 86, True),
+    275: ("burger-romeu", 86, True),
+    274: ("burger-big", 86, True),
+    276: ("burger-hero", 88, True),
+    277: ("logo-mana", 92, False),
+    268: ("textura-madeira", 76, False),
+    322: ("chama", 70, False),
 }
 
 
@@ -58,6 +67,20 @@ def recorta(im):
     return im.crop(bb) if bb else im
 
 
+def amplia(im):
+    """Amplia com Lanczos e devolve a nitidez que a interpolação come."""
+    fator = min(ALTURA_ALVO / im.height, MAX_FATOR)
+    if fator <= 1.02:
+        return im
+    novo = (round(im.width * fator), round(im.height * fator))
+    im = im.resize(novo, Image.LANCZOS)
+    # só o canal de cor leva a máscara; mexer no alfa serrilharia o recorte
+    rgb, alfa = im.convert("RGB"), im.split()[-1]
+    rgb = rgb.filter(ImageFilter.UnsharpMask(radius=1.6, percent=110, threshold=3))
+    rgb.putalpha(alfa)
+    return rgb
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit("uso: python3 tools/extract-cardapio.py caminho/para/cardapio.pdf")
@@ -74,8 +97,10 @@ def main():
                  "O PDF provavelmente mudou — reveja o dicionário IMAGENS." % faltando)
 
     os.makedirs(OUT, exist_ok=True)
-    for xref, (nome, q) in IMAGENS.items():
+    for xref, (nome, q, ampliar) in IMAGENS.items():
         im = recorta(rgba(doc, xref, mascaras[xref]))
+        if ampliar:
+            im = amplia(im)
         destino = os.path.join(OUT, nome + ".webp")
         im.save(destino, "WEBP", quality=q, method=6)
         print("%-18s %4dx%-5d %5d KB" % (nome, im.width, im.height,

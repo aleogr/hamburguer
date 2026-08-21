@@ -260,39 +260,31 @@
     els.forEach(function (e) { io.observe(e); });
   })();
 
-  /* ── 10. Menu: item ativo + troca de imagem ───────────────────────────── */
-  (function menu() {
-    var items = $$("[data-menu-item]");
-    var imgs  = $$("[data-menu-img]");
-    var caption = $("#menuCaption");
-    if (!items.length || !imgs.length) return;
+  /* ── 10. Especiais: troca o lanche do palco conforme o painel passa ───── */
+  (function palco() {
+    var paineis = $$("[data-menu-item]");
+    var fotos   = $$("[data-menu-img]");
+    var nome    = $("#stageName");
+    if (!paineis.length || !fotos.length) return;
 
-    var show = function (key, name) {
-      imgs.forEach(function (img) {
-        img.classList.toggle("is-on", img.getAttribute("data-menu-img") === key);
+    var mostra = function (chave, titulo) {
+      fotos.forEach(function (f) {
+        f.classList.toggle("is-on", f.getAttribute("data-menu-img") === chave);
       });
-      if (caption && name) caption.textContent = name;
+      if (nome && titulo) nome.textContent = titulo;
     };
 
+    // a faixa estreita no meio da tela garante que só um painel mande por vez
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (!en.isIntersecting) return;
-        items.forEach(function (i) { i.classList.toggle("is-active", i === en.target); });
-        show(en.target.getAttribute("data-menu-item"), $("h3", en.target).textContent);
+        paineis.forEach(function (p) { p.classList.toggle("is-active", p === en.target); });
+        mostra(en.target.getAttribute("data-menu-item"), $("h3", en.target).textContent);
       });
-    }, { rootMargin: "-40% 0px -45% 0px" });
+    }, { rootMargin: "-45% 0px -45% 0px" });
 
-    items.forEach(function (i) { io.observe(i); });
-
-    // no hover também troca — dá resposta imediata no desktop
-    items.forEach(function (i) {
-      i.addEventListener("mouseenter", function () {
-        items.forEach(function (o) { o.classList.toggle("is-active", o === i); });
-        show(i.getAttribute("data-menu-item"), $("h3", i).textContent);
-      });
-    });
-
-    items[0].classList.add("is-active");
+    paineis.forEach(function (p) { io.observe(p); });
+    paineis[0].classList.add("is-active");
   })();
 
   /* ── 11. Parallax ─────────────────────────────────────────────────────── */

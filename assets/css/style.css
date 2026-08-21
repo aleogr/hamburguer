@@ -7,7 +7,7 @@
    5. Hero
    6. Ticker
    7. Manifesto
-   8. Especiais (menu com imagem fixa)
+   8. Especiais (palco de tela cheia)
    9. Break em parallax
    10. Cartões de cardápio (tradicionais e combos)
    11. Bebidas e listas de preço
@@ -349,54 +349,96 @@ p{margin:0 0 1em}
 }
 .stat span{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim)}
 
-/* ── 8. Especiais ───────────────────────────────────────────────────────────── */
-.menu{padding:clamp(4rem,10vw,8rem) 0}
-.menu__inner{
-  max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad);
-  display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1fr);
-  gap:clamp(2rem,6vw,6rem);align-items:start;
-}
-.menu__visual{position:sticky;top:14vh}
-.menu__frame{
-  position:relative;aspect-ratio:1/1;overflow:hidden;border-radius:2px;
-  isolation:isolate;
-  background:
-    radial-gradient(60% 55% at 50% 52%,rgba(255,149,27,.22) 0%,transparent 70%),
-    linear-gradient(160deg,#3a1108 0%,#1b0806 100%);
-  border:1px solid var(--rule);
-}
-/* as fotos vieram recortadas do cardápio: contain, para não cortar o lanche */
-.menu__frame img{
-  position:absolute;inset:0;margin:auto;
-  /* teto em px: os recortes têm ~280px de largura e esticar mais borra */
-  width:clamp(9rem,64%,22rem);height:auto;max-height:78%;object-fit:contain;
-  opacity:0;transform:scale(.94);
-  filter:drop-shadow(0 24px 40px rgba(0,0,0,.55));
-  transition:opacity .7s var(--ease),transform 1s var(--ease-out);
-}
-.menu__frame img.is-on{opacity:1;transform:none}
-.menu__caption{
-  margin:1rem 0 0;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim);
-}
-.menu__head{margin-bottom:clamp(2.5rem,6vw,4rem)}
+/* ── 8. Especiais (palco de tela cheia) ────────────────────────────────── */
+/* O palco é sticky e o texto passa por cima dele: o .stage__flow é puxado
+   para cima com margin-top negativa, sobrepondo exatamente a altura do palco.
+   Cada painel tem uma tela de altura, então só um lanche fica visível por vez. */
+.stage-sec{position:relative}
 
-.item{
-  padding:2rem 0;border-top:1px solid var(--rule);
-  opacity:.45;transition:opacity .5s var(--ease),padding-left .5s var(--ease-out);
+.stage{
+  position:sticky;top:0;z-index:0;
+  height:100svh;overflow:hidden;isolation:isolate;
 }
-.item.is-active{opacity:1;padding-left:1rem}
-.item:last-of-type{border-bottom:1px solid var(--rule)}
-.item__top{display:flex;align-items:baseline;justify-content:space-between;gap:1rem}
-.item h3{font-size:clamp(1.5rem,3.4vw,2.6rem);font-family:"Anton",sans-serif;text-transform:uppercase}
-.item.is-active h3{color:var(--ember-text)}
-.item__price{font-size:.9rem;letter-spacing:.12em;font-weight:500;white-space:nowrap;color:var(--fg-dim)}
-.item p{margin:.7rem 0 .9rem;max-width:44ch;color:var(--fg-dim);font-size:.95rem}
+.stage__glow{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(42% 46% at 66% 46%,rgba(255,149,27,.30) 0%,transparent 70%),
+    radial-gradient(80% 70% at 66% 46%,rgba(255,80,10,.12) 0%,transparent 75%),
+    linear-gradient(165deg,#33100a 0%,#1a0706 65%,#120504 100%);
+}
+.stage__photos{
+  position:absolute;inset:0;
+  animation:flutua 9s ease-in-out infinite;   /* some com movimento reduzido */
+}
+@keyframes flutua{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-14px)}
+}
+.stage__photo{
+  position:absolute;top:50%;left:66%;
+  width:auto;height:auto;
+  max-width:min(46vw,38rem);max-height:min(62svh,38rem);
+  opacity:0;transform:translate(-50%,-46%) scale(.94);
+  filter:drop-shadow(0 40px 70px rgba(0,0,0,.7));
+  transition:opacity .8s var(--ease),transform 1.5s var(--ease-out);
+}
+.stage__photo.is-on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+/* escurece o lado do texto sem apagar o lanche */
+.stage__scrim{
+  position:absolute;inset:0;
+  background:linear-gradient(100deg,
+    rgba(18,5,4,.94) 0%,rgba(18,5,4,.82) 30%,rgba(18,5,4,.35) 52%,rgba(18,5,4,0) 70%);
+}
+/* nome do lanche em tipo enorme, atrás de tudo */
+.stage__name{
+  position:absolute;right:2vw;bottom:2vh;margin:0;max-width:60vw;
+  font-family:"Anton",sans-serif;text-transform:uppercase;text-align:right;
+  font-size:clamp(2rem,7vw,6.5rem);line-height:.9;letter-spacing:-.02em;
+  color:var(--cream);opacity:.09;pointer-events:none;
+}
+
+.stage__flow{position:relative;z-index:2;margin-top:-100svh}
+.stage__head{
+  min-height:72svh;display:flex;flex-direction:column;justify-content:center;
+  padding:8rem var(--pad) 0;
+}
+.stage__hint{
+  margin:2rem 0 0;font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--fg-dim);
+}
+
+.panel{
+  min-height:100svh;display:flex;align-items:center;
+  padding:4rem var(--pad);
+}
+.panel__inner{max-width:34rem;color:var(--cream)}
+.panel__index{
+  margin:0 0 1rem;font-size:.68rem;letter-spacing:.28em;
+  color:var(--ember-text);
+}
+.panel__top{display:flex;align-items:baseline;gap:1.2rem;flex-wrap:wrap}
+.panel h3{
+  font-family:"Anton",sans-serif;text-transform:uppercase;
+  font-size:clamp(2rem,5.2vw,4rem);line-height:.95;
+}
+.panel__price{
+  flex:none;font-size:.8rem;font-weight:600;letter-spacing:.04em;
+  padding:.35rem .85rem;border-radius:999px;
+  background:var(--ember);color:var(--ink);
+}
+.panel__desc{
+  margin:1.2rem 0 1.4rem;font-size:1.02rem;line-height:1.55;
+  color:var(--cream-dim);
+}
+
 /* ingredientes, no mesmo formato de lista do cardápio impresso */
 .ings{
   display:flex;flex-wrap:wrap;gap:.25rem 1.1rem;
   margin:0;padding:0;list-style:none;
   font-size:.84rem;color:var(--fg-dim);
 }
+.panel .ings{color:var(--cream-dim)}
 .ings li{position:relative;padding-left:.75rem}
 .ings li::before{
   content:"";position:absolute;left:0;top:.62em;
@@ -585,9 +627,8 @@ p{margin:0 0 1em}
 
 /* ── 16. Responsivo ────────────────────────────────────────────────────── */
 @media (max-width:1024px){
-  .menu__inner{grid-template-columns:1fr}
-  .menu__visual{position:relative;top:auto;margin-bottom:2.5rem}
-  .menu__frame{aspect-ratio:16/11}
+  .stage__photo{left:60%;max-width:56vw}
+  .stage__name{font-size:clamp(1.6rem,6vw,4rem)}
   .about__grid{grid-template-columns:1fr}
   .about__media{aspect-ratio:16/10;order:2}
   .manifesto__grid{grid-template-columns:1fr 1fr;gap:2rem 1rem}
@@ -601,6 +642,16 @@ p{margin:0 0 1em}
   .drinks .pricelist+.pricelist li:first-child{border-top:0}
   .hero__burger{display:none}
   .scroll-cue{display:none}
+  /* sem espaço para lado a lado: lanche em cima, texto embaixo */
+  .stage__photo{left:50%;top:34%;max-width:82vw;max-height:38svh}
+  .stage__photo.is-on{transform:translate(-50%,-50%) scale(1)}
+  .stage__scrim{
+    background:linear-gradient(180deg,
+      rgba(18,5,4,.5) 0%,rgba(18,5,4,.2) 26%,rgba(18,5,4,.86) 52%,rgba(18,5,4,.97) 72%);
+  }
+  .stage__name{display:none}
+  .panel{align-items:flex-end;padding-bottom:6svh}
+  .panel__desc{font-size:.95rem}
   .hero{padding-bottom:2.5rem}
   .hero__meta{margin-top:2rem;flex-wrap:wrap}
   .about__facts span{text-align:left}
@@ -619,7 +670,7 @@ p{margin:0 0 1em}
   .reveal{opacity:1;transform:none}
   .hero__title .line>span{transform:none}
   [data-fill] .w{opacity:1}
-  .item{opacity:1}
+  .stage__photo{transition:none}
   .grain{display:none}
   .process__sticky{position:static;height:auto}
   .process__track{flex-wrap:wrap;transform:none!important}

@@ -148,82 +148,86 @@
   </div>
 </section>
 
-<!-- ══ 03 · ESPECIAIS (sticky + troca de imagem) ═════════════ -->
-<section class="menu" id="especiais" data-theme="dark">
-  <div class="menu__inner">
+<!-- ══ 03 · ESPECIAIS ════════════════════════════════════════
+     Palco fixo: o lanche fica ao fundo, em tela cheia, e troca conforme
+     o painel de texto correspondente passa pelo meio da tela. -->
+<section class="stage-sec" id="especiais" data-theme="dark">
 
-    <div class="menu__visual">
-      <div class="menu__frame">
-        <img src="assets/img/burger-classico.webp" alt="" data-menu-img="classico" class="is-on">
-        <img src="assets/img/burger-hothoney.webp" alt="" data-menu-img="hothoney">
-        <img src="assets/img/burger-queijos.webp"  alt="" data-menu-img="queijos">
-        <img src="assets/img/burger-texas.webp"    alt="" data-menu-img="texas">
-        <img src="assets/img/burger-romeu.webp"    alt="" data-menu-img="romeu">
-        <img src="assets/img/burger-big.webp"      alt="" data-menu-img="big">
+  <div class="stage" aria-hidden="true">
+    <div class="stage__glow"></div>
+    <div class="stage__photos">
+      <img src="assets/img/burger-classico.webp" alt="" class="stage__photo is-on" data-menu-img="classico">
+      <img src="assets/img/burger-hothoney.webp" alt="" class="stage__photo" data-menu-img="hothoney" loading="lazy">
+      <img src="assets/img/burger-queijos.webp" alt="" class="stage__photo" data-menu-img="queijos" loading="lazy">
+      <img src="assets/img/burger-texas.webp" alt="" class="stage__photo" data-menu-img="texas" loading="lazy">
+      <img src="assets/img/burger-romeu.webp" alt="" class="stage__photo" data-menu-img="romeu" loading="lazy">
+      <img src="assets/img/burger-big.webp" alt="" class="stage__photo" data-menu-img="big" loading="lazy">
+    </div>
+    <div class="stage__scrim"></div>
+    <div class="grain"></div>
+    <p class="stage__name" id="stageName">Clássico Maná</p>
+  </div>
+
+  <div class="stage__flow">
+    <header class="stage__head">
+      <p class="section-tag"><i>02</i> Especiais</p>
+      <h2 class="h-lg">Os seis<br>da casa.</h2>
+      <p class="stage__hint">Role para ver todos</p>
+    </header>
+
+    <article class="panel" data-menu-item="classico">
+      <div class="panel__inner">
+        <p class="panel__index">01 — 06</p>
+        <div class="panel__top"><h3>Clássico Maná</h3><span class="panel__price">R$ 34,00</span></div>
+        <p class="panel__desc">Entre o macio brioche selado e a força do hambúrguer artesanal, a frescura da horta se encontra com a suavidade do cheddar e a alma da maionese artesanal. Assim se revela o Clássico Maná.</p>
+        <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li><li>Bacon crocante</li><li>Maionese artesanal</li><li>Alface e tomate</li></ul>
       </div>
-      <p class="menu__caption"><span id="menuCaption">Clássico Maná</span></p>
-    </div>
+    </article>
 
-    <div class="menu__list">
-      <header class="menu__head">
-        <p class="section-tag"><i>02</i> Especiais</p>
-        <h2 class="h-lg">Os seis<br>da casa.</h2>
-      </header>
+    <article class="panel" data-menu-item="hothoney">
+      <div class="panel__inner">
+        <p class="panel__index">02 — 06</p>
+        <div class="panel__top"><h3>Hot Honey Bacon</h3><span class="panel__price">R$ 40,00</span></div>
+        <p class="panel__desc">Combinando um delicioso hambúrguer artesanal com um molho de bacon com mel e uma pitada de pimenta para um sabor inigualável, temos o Hot Honey Bacon.</p>
+        <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li><li>Molho de bacon, mel e pimenta</li><li>Alfaces frescas</li></ul>
+      </div>
+    </article>
 
-      <article class="item" data-menu-item="classico" data-cursor="ver">
-        <div class="item__top"><h3>Clássico Maná</h3><span class="item__price">R$ 34,00</span></div>
-        <p>Entre o macio brioche selado e a força do hambúrguer artesanal, a frescura da horta se encontra com a suavidade do cheddar e a alma da maionese artesanal. Assim se revela o Clássico Maná.</p>
-        <ul class="ings">
-          <li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li>
-          <li>Bacon crocante</li><li>Maionese artesanal</li><li>Alface e tomate</li>
-        </ul>
-      </article>
+    <article class="panel" data-menu-item="queijos">
+      <div class="panel__inner">
+        <p class="panel__index">03 — 06</p>
+        <div class="panel__top"><h3>Queijo &amp; Mais Queijo</h3><span class="panel__price">R$ 38,00</span></div>
+        <p class="panel__desc">Combinando a suculência do hambúrguer artesanal com a intensidade dos queijos e o toque da cebola caramelizada, surge o irresistível.</p>
+        <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li><li>Queijo muçarela</li><li>Queijo catupiry</li><li>Cebola caramelizada</li><li>Maionese artesanal</li></ul>
+      </div>
+    </article>
 
-      <article class="item" data-menu-item="hothoney" data-cursor="ver">
-        <div class="item__top"><h3>Hot Honey Bacon</h3><span class="item__price">R$ 40,00</span></div>
-        <p>Combinando um delicioso hambúrguer artesanal com um molho de bacon com mel e uma pitada de pimenta para um sabor inigualável, temos o Hot Honey Bacon.</p>
-        <ul class="ings">
-          <li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li>
-          <li>Molho de bacon, mel e pimenta</li><li>Alfaces frescas</li>
-        </ul>
-      </article>
+    <article class="panel" data-menu-item="texas">
+      <div class="panel__inner">
+        <p class="panel__index">04 — 06</p>
+        <div class="panel__top"><h3>Texas Burguer</h3><span class="panel__price">R$ 34,00</span></div>
+        <p class="panel__desc">Uma referência internacional de um clássico hambúrguer americano: um molho conislau que leva repolho roxo, cenoura, maionese artesanal e um tempero que só a Maná tem.</p>
+        <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li><li>Maionese artesanal</li><li>Barbecue artesanal levemente apimentado</li><li>Molho conislau</li></ul>
+      </div>
+    </article>
 
-      <article class="item" data-menu-item="queijos" data-cursor="ver">
-        <div class="item__top"><h3>Queijo &amp; Mais Queijo</h3><span class="item__price">R$ 38,00</span></div>
-        <p>Combinando a suculência do hambúrguer artesanal com a intensidade dos queijos e o toque da cebola caramelizada, surge o irresistível.</p>
-        <ul class="ings">
-          <li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li>
-          <li>Queijo muçarela</li><li>Queijo catupiry</li><li>Cebola caramelizada</li><li>Maionese artesanal</li>
-        </ul>
-      </article>
+    <article class="panel" data-menu-item="romeu">
+      <div class="panel__inner">
+        <p class="panel__index">05 — 06</p>
+        <div class="panel__top"><h3>Romeu e Julieta</h3><span class="panel__price">R$ 38,00</span></div>
+        <p class="panel__desc">A exclusividade de um lanche que você só encontra aqui. Hambúrguer artesanal feito na brasa, um queijo colonial e uma geleia de goiabada artesanal: um mix de sabores que vai elevar seu paladar a outro nível.</p>
+        <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo colonial</li><li>Geleia de goiabada artesanal</li><li>Maionese artesanal</li></ul>
+      </div>
+    </article>
 
-      <article class="item" data-menu-item="texas" data-cursor="ver">
-        <div class="item__top"><h3>Texas Burguer</h3><span class="item__price">R$ 34,00</span></div>
-        <p>Uma referência internacional de um clássico hambúrguer americano: um molho conislau que leva repolho roxo, cenoura, maionese artesanal e um tempero que só a Maná tem.</p>
-        <ul class="ings">
-          <li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li>
-          <li>Maionese artesanal</li><li>Barbecue artesanal levemente apimentado</li><li>Molho conislau</li>
-        </ul>
-      </article>
-
-      <article class="item" data-menu-item="romeu" data-cursor="ver">
-        <div class="item__top"><h3>Romeu e Julieta</h3><span class="item__price">R$ 38,00</span></div>
-        <p>A exclusividade de um lanche que você só encontra aqui. Hambúrguer artesanal feito na brasa, um queijo colonial e uma geleia de goiabada artesanal: um mix de sabores que vai elevar seu paladar a outro nível.</p>
-        <ul class="ings">
-          <li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo colonial</li>
-          <li>Geleia de goiabada artesanal</li><li>Maionese artesanal</li>
-        </ul>
-      </article>
-
-      <article class="item" data-menu-item="big" data-cursor="ver">
-        <div class="item__top"><h3>Big Burguer</h3><span class="item__price">R$ 48,00</span></div>
-        <p>Este lanche é para você que se garante em um grande hambúrguer.</p>
-        <ul class="ings">
-          <li>Pão de brioche</li><li>2 hambúrgueres artesanais 180 g</li><li>Queijo cheddar</li>
-          <li>Bacon crocante</li><li>Maionese artesanal</li><li>Alfaces frescas</li>
-        </ul>
-      </article>
-    </div>
+    <article class="panel" data-menu-item="big">
+      <div class="panel__inner">
+        <p class="panel__index">06 — 06</p>
+        <div class="panel__top"><h3>Big Burguer</h3><span class="panel__price">R$ 48,00</span></div>
+        <p class="panel__desc">Este lanche é para você que se garante em um grande hambúrguer.</p>
+        <ul class="ings"><li>Pão de brioche</li><li>2 hambúrgueres artesanais 180 g</li><li>Queijo cheddar</li><li>Bacon crocante</li><li>Maionese artesanal</li><li>Alfaces frescas</li></ul>
+      </div>
+    </article>
   </div>
 </section>
 
