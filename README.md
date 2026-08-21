@@ -193,6 +193,49 @@ Amostrada direto do PDF e definida em tokens no topo do `style.css`:
 
 Trocar esses valores muda o site inteiro.
 
+## O que custa caro num site assim
+
+A primeira versão engasgava na tira do "como fazemos". Medindo o intervalo
+entre quadros (16,7 ms = 60 fps) seção por seção, com o scroll acionado num
+laço de `requestAnimationFrame`, deu para separar quem era culpado de quem só
+estava por perto:
+
+| Seção | Antes | Depois |
+|---|---|---|
+| Hero | 64,7 ms | 16,7 ms |
+| Especiais | 42,9 ms | 16,9 ms |
+| Como fazemos | 20,5 ms | 16,9 ms |
+| Resto da página | 16,7 ms | 16,7 ms |
+
+Quatro causas, em ordem de tamanho:
+
+1. **`filter: drop-shadow` em elemento que se move.** Sozinho respondia por
+   quase todo o custo do hero (44 → 17 ms). O filtro é recalculado a cada
+   quadro em que o elemento muda de posição, e tanto o lanche do hero quanto as
+   fotos dos especiais têm parallax e transição. A sombra virou um degradê
+   radial no fundo, que é pintado uma vez só — visualmente é o mesmo.
+2. **`mix-blend-mode` no grão.** A textura ficava num elemento de quatro vezes
+   a área da tela, composta em modo `overlay` e ainda animada. Custava ~24 ms
+   por quadro no hero e nos especiais. Agora é estática, sem blend e numa área
+   justa.
+3. **Dois retângulos de tela cheia empilhados.** No "como fazemos", o
+   escurecido cobria o painel inteiro por cima da foto. Passou a cobrir só a
+   metade de baixo, onde mora o texto, mais uma faixa curta no topo.
+4. **Escrever estilo em todo quadro dentro de uma camada transformada.** O
+   texto dos painéis tinha `opacity` e `transform` recalculados a cada quadro,
+   o que invalidava a camada da tira inteira. Virou uma classe trocada só na
+   passagem, com a transição por conta do CSS.
+
+Duas lições que valem para as próximas mudanças: **filtro em elemento que se
+mexe é caro**, e **quanto menos coisa mudar dentro de um elemento
+transformado, melhor** — o ideal é que a tira seja a única coisa que se move.
+
+Uma armadilha que também apareceu no caminho: cheguei a rasterizar os
+placeholders SVG para WebP achando que o custo era re-rasterizar vetor. Não
+era — e o rasterizador do MuPDF não desenha gradiente nenhum, devolvendo
+retângulos pretos sem reclamar. Ficou registrado no cabeçalho do
+`gen-placeholders.py` para ninguém tentar de novo.
+
 ## Acessibilidade e performance
 
 - Tudo que se mexe respeita `prefers-reduced-motion`: com a opção ligada no
@@ -204,3 +247,9 @@ Trocar esses valores muda o site inteiro.
   cardápio impresso; branco sobre laranja não passaria.
 - Os vídeos pausam quando saem da tela e quando a aba fica em segundo plano;
   os efeitos de scroll rodam num único `requestAnimationFrame`.
+- Os painéis do "como fazemos" usam `content-visibility: auto`: painel fora da
+  tela não é desenhado.
+- A brasa animada em canvas desenha a 30 fps, não a 60 — as brasas se mexem
+  devagar e a diferença não aparece. Ela some de vez quando houver vídeo.
+- O texto dos painéis só some depois que o JS assume a tira. Sem script, os
+  quatro passos aparecem empilhados e legíveis.

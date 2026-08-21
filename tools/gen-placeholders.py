@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 """
-Gera os SVGs de placeholder usados pelo site enquanto as fotos e vídeos reais
-não chegam. Rode `python3 tools/gen-placeholders.py` para recriar os arquivos
-em assets/img/. Quando tiver as imagens de verdade, é só substituir os arquivos
+Gera os placeholders usados pelo site enquanto as fotos e vídeos reais não
+chegam. Rode `python3 tools/gen-placeholders.py` para recriar os arquivos em
+assets/img/. Quando tiver as imagens de verdade, é só substituir os arquivos
 mantendo os mesmos nomes (ou trocar os caminhos no index.html).
+
+Sai em SVG mesmo. Cheguei a rasterizar para WebP achando que re-rasterizar
+vetor a cada quadro era o que travava a seção "como fazemos", mas o gargalo era
+outro (escurecido empilhado e drop-shadow em elemento que se move). E o
+rasterizador do MuPDF, de quebra, não desenha gradiente nenhum: devolvia
+retângulos pretos sem reclamar uma única vez. Medido depois das correções de
+verdade, o SVG não custa nada — a seção roda cravada nos 16,7 ms por quadro.
 """
-import math
+import colorsys
 import os
 import random
 
@@ -21,14 +28,21 @@ PLACEHOLDERS = [
     ("processo-01",      "A CARNE",                (1920, 1080), (10, 55, 11), 8, True),
     ("processo-02",      "A BRASA",                (1920, 1080), (22, 74, 12), 9, True),
     ("processo-03",      "A MONTAGEM",             (1920, 1080), (33, 60, 11), 10, True),
-    ("casa-salao",       "O SALAO",                (1200, 900),  (20, 40, 11), 12, False),
-    ("casa-balcao",      "O BALCAO",               (1200, 900),  (28, 36, 10), 13, False),
     ("sobre-equipe",     "A EQUIPE",               (1200, 1400), (30, 34, 10), 15, False),
 ]
 
 
 def hsl(h, s, l):
-    return f"hsl({h % 360} {s}% {l}%)"
+    """HSL -> #RRGGBB.
+
+    Sai em hex de proposito: o rasterizador do MuPDF nao entende a notacao
+    hsl() do CSS e devolvia tudo preto, sem erro nenhum. Foi assim que os
+    placeholders viraram retangulos pretos na primeira versao rasterizada.
+    """
+    r, g, b = colorsys.hls_to_rgb((h % 360) / 360.0,
+                                  max(0, min(100, l)) / 100.0,
+                                  max(0, min(100, s)) / 100.0)
+    return "#%02X%02X%02X" % (round(r * 255), round(g * 255), round(b * 255))
 
 
 def build(name, label, size, base, seed, corner_label=False):
@@ -117,10 +131,12 @@ def build(name, label, size, base, seed, corner_label=False):
 def main():
     os.makedirs(OUT, exist_ok=True)
     for name, label, size, base, seed, corner_label in PLACEHOLDERS:
-        path = os.path.join(OUT, name + ".svg")
-        with open(path, "w", encoding="utf-8") as fh:
+        destino = os.path.join(OUT, name + ".svg")
+        with open(destino, "w", encoding="utf-8") as fh:
             fh.write(build(name, label, size, base, seed, corner_label))
-        print("gerado:", os.path.relpath(path))
+        print("gerado: %-30s %4dx%-5d %3d KB"
+              % (os.path.relpath(destino), size[0], size[1],
+                 os.path.getsize(destino) // 1024))
 
 
 if __name__ == "__main__":

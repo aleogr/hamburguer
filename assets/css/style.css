@@ -178,18 +178,14 @@ p{margin:0 0 1em}
 @media (hover:none),(pointer:coarse){.cursor{display:none}}
 
 .grain{
-  position:absolute;inset:-50%;pointer-events:none;z-index:2;
-  opacity:.16;mix-blend-mode:overlay;
+  position:absolute;inset:-6%;pointer-events:none;z-index:2;
+  opacity:.09;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
-  animation:grain 8s steps(6) infinite;
 }
-@keyframes grain{
-  0%,100%{transform:translate(0,0)}
-  20%{transform:translate(-4%,3%)}
-  40%{transform:translate(3%,-3%)}
-  60%{transform:translate(-3%,-2%)}
-  80%{transform:translate(2%,4%)}
-}
+/* Sem mix-blend-mode e sem animação de propósito. O grão tremia num elemento
+   de 4x a área da tela e composto em modo "overlay" — só isso custava ~24ms
+   por quadro nas seções do hero e dos especiais, quase metade do orçamento de
+   60fps. Estático e sem blend a textura continua lá e o custo some. */
 
 /* ── 4. Navegação e overlay ────────────────────────────────────────────── */
 .nav{
@@ -279,13 +275,15 @@ p{margin:0 0 1em}
 .hero__scrim{
   position:absolute;inset:0;z-index:2;
   background:
+    /* sombra do lanche, assada no degradê: o drop-shadow saía caro porque o
+       lanche tem parallax e o filtro era refeito a cada quadro */
+    radial-gradient(28% 16% at 74% 72%,rgba(0,0,0,.55) 0%,transparent 70%),
     linear-gradient(to top,rgba(11,10,9,.94) 0%,rgba(11,10,9,.35) 45%,rgba(11,10,9,.55) 100%),
     radial-gradient(120% 80% at 50% 40%,transparent 30%,rgba(11,10,9,.7) 100%);
 }
 .hero__burger{
   position:absolute;z-index:2;right:-2%;bottom:12%;
   width:min(46vw,40rem);pointer-events:none;
-  filter:drop-shadow(0 30px 60px rgba(0,0,0,.6));
   opacity:0;transform:translateY(40px) scale(.96);
   transition:opacity 1.4s var(--ease-out) .5s,transform 1.6s var(--ease-out) .5s;
 }
@@ -362,6 +360,9 @@ p{margin:0 0 1em}
 .stage__glow{
   position:absolute;inset:0;
   background:
+    /* a sombra que aterra o lanche vem daqui, e não de um filter: assim ela é
+       pintada uma vez só, em vez de ser refeita a cada quadro do scroll */
+    radial-gradient(26% 13% at 66% 74%,rgba(0,0,0,.6) 0%,transparent 72%),
     radial-gradient(42% 46% at 66% 46%,rgba(255,149,27,.30) 0%,transparent 70%),
     radial-gradient(80% 70% at 66% 46%,rgba(255,80,10,.12) 0%,transparent 75%),
     linear-gradient(165deg,#33100a 0%,#1a0706 65%,#120504 100%);
@@ -379,10 +380,20 @@ p{margin:0 0 1em}
   width:auto;height:auto;
   max-width:min(46vw,38rem);max-height:min(62svh,38rem);
   opacity:0;transform:translate(-50%,-46%) scale(.94);
-  filter:drop-shadow(0 40px 70px rgba(0,0,0,.7));
-  transition:opacity .8s var(--ease),transform 1.5s var(--ease-out);
+  /* visibility entra junto com um atraso do tamanho do fade: seis fotos
+     grandes em opacity:0 continuam sendo compostas a cada quadro, e só isso
+     custava ~6ms. Escondidas de verdade, o navegador pula as cinco que não
+     estão em cena — e a transição continua igual, porque a volta para hidden
+     só acontece depois que o fade termina. */
+  visibility:hidden;
+  transition:opacity .8s var(--ease),transform 1.5s var(--ease-out),
+             visibility 0s linear .8s;
 }
-.stage__photo.is-on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.stage__photo.is-on{
+  opacity:1;transform:translate(-50%,-50%) scale(1);
+  visibility:visible;
+  transition:opacity .8s var(--ease),transform 1.5s var(--ease-out),visibility 0s;
+}
 
 /* escurece o lado do texto sem apagar o lanche */
 .stage__scrim{
@@ -494,23 +505,36 @@ p{margin:0 0 1em}
   position:relative;flex:0 0 100vw;height:100%;
   display:flex;align-items:flex-end;
   overflow:hidden;isolation:isolate;
+  /* painel fora da tela não é desenhado; só dois ficam visíveis por vez */
+  content-visibility:auto;
+  contain-intrinsic-size:100vw 100svh;
 }
 .frame__media{position:absolute;inset:0;overflow:hidden}
-/* a foto é mais larga que o painel para poder se mexer por dentro dele */
-.frame__media img{
-  width:112%;height:100%;max-width:none;object-fit:cover;
-  will-change:transform;
-}
+.frame__media img{width:100%;height:100%;max-width:none;object-fit:cover}
+/* O escurecido cobre só a metade de baixo, onde mora o texto. Cobrindo o
+   painel inteiro era um segundo retângulo de tela cheia por cima de outro, e
+   esse empilhamento é o que mais pesa aqui. */
 .frame__scrim{
-  position:absolute;inset:0;
+  position:absolute;left:0;right:0;bottom:0;top:38%;
   background:linear-gradient(to top,
-    rgba(18,5,4,.95) 0%,rgba(18,5,4,.7) 34%,rgba(18,5,4,.25) 62%,rgba(18,5,4,.45) 100%);
+    rgba(18,5,4,.95) 0%,rgba(18,5,4,.72) 45%,rgba(18,5,4,0) 100%);
+}
+/* faixa curta no topo, só para o cabeçalho da seção continuar legível */
+.frame__media::after{
+  content:"";position:absolute;left:0;right:0;top:0;height:26%;
+  background:linear-gradient(to bottom,rgba(18,5,4,.72) 0%,rgba(18,5,4,0) 100%);
 }
 .frame__text{
   position:relative;z-index:1;
   max-width:min(42rem,72vw);
   padding:0 var(--pad) clamp(4rem,10vh,7rem);
+  transition:opacity .5s var(--ease),transform .7s var(--ease-out);
 }
+/* O texto só some depois que o JS assume a tira. Se o script não rodar — ou
+   se o visitante pediu menos movimento, e aí a tira nem existe — os quatro
+   passos aparecem empilhados e legíveis, que é o estado correto sem JS. */
+.process.tira-ativa .frame__text{opacity:0;transform:translateX(40px)}
+.process.tira-ativa .frame.is-on .frame__text{opacity:1;transform:none}
 .frame__num{
   display:block;margin-bottom:1rem;
   font-family:"Anton",sans-serif;font-size:.85rem;letter-spacing:.24em;
