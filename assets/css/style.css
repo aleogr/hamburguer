@@ -398,6 +398,18 @@ p{margin:0 0 1em}
   color:var(--cream);opacity:.09;pointer-events:none;
 }
 
+.stage__dots{
+  position:absolute;right:calc(var(--pad) * .5);top:50%;z-index:3;
+  transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:.7rem;
+}
+.stage__dots i{
+  display:block;width:7px;height:7px;border-radius:999px;
+  background:rgba(244,233,223,.26);
+  transition:background-color .5s var(--ease),transform .5s var(--ease-out);
+}
+.stage__dots i.is-on{background:var(--ember);transform:scale(1.6)}
+
 .stage__flow{position:relative;z-index:2;margin-top:-100svh}
 .stage__head{
   min-height:72svh;display:flex;flex-direction:column;justify-content:center;
@@ -660,6 +672,15 @@ p{margin:0 0 1em}
   .foot__top{flex-direction:column}
 }
 
+/* No toque o salto entre lanches é feito pelo scroll-snap do navegador, que
+   respeita o impulso do dedo; o JS só assume no mouse e no teclado. A âncora
+   é "proximity" e só os painéis têm ponto de parada, então o resto da página
+   continua rolando livre. */
+@media (pointer:coarse){
+  html{scroll-snap-type:y proximity}
+  .panel{scroll-snap-align:start}
+}
+
 /* ── 17. Movimento reduzido ────────────────────────────────────────────── */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -671,6 +692,8 @@ p{margin:0 0 1em}
   .hero__title .line>span{transform:none}
   [data-fill] .w{opacity:1}
   .stage__photo{transition:none}
+  html{scroll-snap-type:none}
+  .panel{scroll-snap-align:none}
   .grain{display:none}
   .process__sticky{position:static;height:auto}
   .process__track{flex-wrap:wrap;transform:none!important}

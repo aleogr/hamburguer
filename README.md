@@ -74,7 +74,7 @@ tools/build-standalone.py   empacota tudo num HTML só (dist/, fora do git)
 | 1 | Hero | Vídeo em tela cheia, título subindo linha por linha, lanche em parallax |
 | 2 | Ticker | Faixa laranja em movimento contínuo |
 | 3 | A Maná | Texto acende palavra por palavra + contadores |
-| 4 | Especiais | Palco de tela cheia: o lanche fica ao fundo e troca conforme o painel de texto passa pelo meio |
+| 4 | Especiais | Palco de tela cheia: cada rolada do mouse (ou seta do teclado) pula para o próximo lanche |
 | 5 | Break | Madeira em parallax e chama, com a frase do X-Meio Quilo |
 | 6 | Tradicionais | Grade de sete cartões |
 | 7 | Combos | Grade de nove combos + porções |
@@ -119,8 +119,40 @@ ter `margin-top: -100svh`, sobrepondo exatamente a altura do palco.
 
 Cada lanche tem um painel de uma tela (`.panel`), então só um aparece por vez.
 Um `IntersectionObserver` com faixa estreita no meio da tela (`rootMargin`
-de -45% em cima e embaixo) decide qual foto acende. Mexer nesses dois números
-— a altura do painel e a largura da faixa — é o que ajusta o ritmo da troca.
+de -45% em cima e embaixo) decide qual foto acende.
+
+### Uma rolada, um lanche
+
+Dentro dessa seção o site assume a rolagem: cada gesto de mouse ou tecla de
+seta pula direto para o próximo lanche, em vez de rolar continuamente. Isso
+mora no módulo `passoAPasso` do `main.js`, e são três constantes no topo dele:
+
+| Constante | Para quê |
+|---|---|
+| `DURACAO` | quanto dura o salto, em ms |
+| `SILENCIO` | quanto tempo sem eventos até aceitar o próximo gesto |
+| `TOLERANCIA` | folga em px para o painel atual não contar como "próximo" |
+
+Dois detalhes que fazem a diferença:
+
+- **Trackpad dispara dezenas de eventos por gesto**, e eles continuam chegando
+  depois que o dedo sai. Por isso o destravamento só acontece após `SILENCIO`
+  sem nenhum evento **e** com a animação já terminada — sem essa segunda
+  condição, um gesto que para cedo destrava no meio do salto e o evento
+  seguinte pula dois lanches de uma vez.
+- **A seção devolve o controle nas pontas.** No último lanche, rolar para
+  baixo não encontra próximo destino e o navegador volta a rolar sozinho; no
+  primeiro, o mesmo para cima. Ninguém fica preso.
+
+Quem não recebe esse tratamento:
+
+- **Toque.** Aí quem dá o passo é o `scroll-snap` do navegador (só os painéis
+  têm ponto de parada), que respeita o impulso do dedo melhor do que qualquer
+  coisa em JS.
+- **`prefers-reduced-motion`.** Tirar o controle da rolagem de quem pediu menos
+  movimento seria o oposto do combinado: ali a seção rola normalmente.
+- **Campos de formulário.** Com o foco num input, as setas seguem movendo o
+  cursor.
 
 ## Paleta
 

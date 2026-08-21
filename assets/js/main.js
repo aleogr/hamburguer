@@ -12,12 +12,13 @@
    7.  Revelações no scroll
    8.  Texto que acende palavra a palavra
    9.  Contadores
-   10. Menu: item ativo + troca de imagem
-   11. Parallax
-   12. Processo: scroll horizontal travado
-   13. Vídeos de fundo (+ fallback animado no canvas)
-   14. Formulário e miudezas
-   15. Loop de scroll (rAF)
+   10. Especiais: troca o lanche do palco
+   11. Especiais: um lanche por rolada
+   12. Parallax
+   13. Processo: scroll horizontal travado
+   14. Vídeos de fundo (+ fallback animado no canvas)
+   15. Formulário e miudezas
+   16. Loop de scroll (rAF)
    ========================================================================== */
 (function () {
   "use strict";
@@ -264,12 +265,16 @@
   (function palco() {
     var paineis = $$("[data-menu-item]");
     var fotos   = $$("[data-menu-img]");
+    var pontos  = $$("[data-dot]");
     var nome    = $("#stageName");
     if (!paineis.length || !fotos.length) return;
 
     var mostra = function (chave, titulo) {
       fotos.forEach(function (f) {
         f.classList.toggle("is-on", f.getAttribute("data-menu-img") === chave);
+      });
+      pontos.forEach(function (d) {
+        d.classList.toggle("is-on", d.getAttribute("data-dot") === chave);
       });
       if (nome && titulo) nome.textContent = titulo;
     };
@@ -287,7 +292,115 @@
     paineis[0].classList.add("is-active");
   })();
 
-  /* ── 11. Parallax ─────────────────────────────────────────────────────── */
+  /* ── 11. Especiais: um lanche por rolada ──────────────────────────────── */
+  (function passoAPasso() {
+    var sec = $("#especiais");
+    if (!sec) return;
+    var paineis = $$(".panel", sec);
+    if (!paineis.length) return;
+
+    // Com movimento reduzido não tomamos conta da rolagem: tirar o controle do
+    // scroll de quem pediu menos movimento seria o oposto do combinado.
+    if (reduced) return;
+    // No toque quem faz o trabalho é o scroll-snap do CSS — ele respeita o
+    // impulso do dedo melhor do que qualquer coisa que a gente escreva aqui.
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
+    var TOLERANCIA = 8;    // px; o painel onde já estamos não conta como próximo
+    var DURACAO = 560;     // ms do salto
+    var SILENCIO = 320;    // ms sem eventos para destravar
+
+    var travado = false, timerSilencio = null, raf = null;
+
+    var topoDoPainel = function (p) {
+      return Math.round(window.scrollY + p.getBoundingClientRect().top);
+    };
+
+    // Y do próximo ponto de parada naquele sentido, ou null se acabaram — e aí
+    // a rolagem volta a ser do navegador e a página sai da seção normalmente.
+    var proximoAlvo = function (dir) {
+      var y = window.scrollY, melhor = null;
+      paineis.forEach(function (p) {
+        var t = topoDoPainel(p);
+        if (dir > 0 && t > y + TOLERANCIA) {
+          if (melhor === null || t < melhor) melhor = t;
+        } else if (dir < 0 && t < y - TOLERANCIA) {
+          if (melhor === null || t > melhor) melhor = t;
+        }
+      });
+      return melhor;
+    };
+
+    // só mandamos na rolagem enquanto a seção ocupa a tela inteira
+    var noComando = function () {
+      var r = sec.getBoundingClientRect();
+      return r.top <= 2 && r.bottom >= window.innerHeight - 2;
+    };
+
+    // Um gesto de trackpad dispara dezenas de eventos, e ainda por cima eles
+    // continuam chegando depois que o dedo sai. Só destravamos depois de um
+    // intervalo sem nenhum evento E com a animação já terminada — sem essa
+    // segunda condição, um gesto que para cedo destravava no meio do salto e
+    // o evento seguinte pulava um segundo lanche.
+    var destravaNoSilencio = function () {
+      window.clearTimeout(timerSilencio);
+      timerSilencio = window.setTimeout(function () {
+        if (raf) { destravaNoSilencio(); return; }
+        travado = false;
+      }, SILENCIO);
+    };
+
+    var salta = function (destino) {
+      travado = true;
+      var inicio = window.scrollY, dist = destino - inicio, t0 = null;
+      // o scroll-behavior:smooth do CSS brigaria com a nossa própria animação
+      document.documentElement.classList.add("no-smooth");
+      if (raf) window.cancelAnimationFrame(raf);
+
+      var passo = function (ts) {
+        if (t0 === null) t0 = ts;
+        var p = clamp((ts - t0) / DURACAO, 0, 1);
+        var e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+        window.scrollTo(0, inicio + dist * e);
+        if (p < 1) {
+          raf = window.requestAnimationFrame(passo);
+        } else {
+          raf = null;
+          document.documentElement.classList.remove("no-smooth");
+          destravaNoSilencio();
+        }
+      };
+      raf = window.requestAnimationFrame(passo);
+    };
+
+    var tenta = function (dir, e) {
+      if (!noComando()) return;
+      if (travado) { e.preventDefault(); destravaNoSilencio(); return; }
+      var destino = proximoAlvo(dir);
+      if (destino === null) return;   // acabaram os lanches: deixa sair daqui
+      e.preventDefault();
+      salta(destino);
+    };
+
+    window.addEventListener("wheel", function (e) {
+      if (e.ctrlKey) return;                       // ctrl+roda é zoom
+      if (Math.abs(e.deltaY) < 2) return;          // rolagem lateral
+      tenta(e.deltaY > 0 ? 1 : -1, e);
+    }, { passive: false });
+
+    var TECLAS = { ArrowDown: 1, PageDown: 1, ArrowUp: -1, PageUp: -1 };
+    window.addEventListener("keydown", function (e) {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      var alvo = e.target;
+      if (alvo && (alvo.closest("input, textarea, select") || alvo.isContentEditable)) return;
+      var dir = TECLAS[e.key];
+      if (e.key === " " || e.key === "Spacebar") dir = e.shiftKey ? -1 : 1;
+      if (!dir) return;
+      tenta(dir, e);
+    });
+  })();
+
+  /* ── 12. Parallax ─────────────────────────────────────────────────────── */
   (function parallax() {
     var els = $$("[data-parallax]");
     if (!els.length || reduced) return;
@@ -303,7 +416,7 @@
     });
   })();
 
-  /* ── 12. Processo: scroll horizontal travado ──────────────────────────── */
+  /* ── 13. Processo: scroll horizontal travado ──────────────────────────── */
   (function processScroll() {
     var sec = $("#processo"), track = $("#processTrack"), bar = $("#processBar");
     if (!sec || !track) return;
@@ -339,7 +452,7 @@
     });
   })();
 
-  /* ── 13. Vídeos de fundo ──────────────────────────────────────────────── */
+  /* ── 14. Vídeos de fundo ──────────────────────────────────────────────── */
   (function backgroundVideo() {
     // toca o vídeo só quando a seção está visível (economiza bateria)
     $$("video").forEach(function (v) {
@@ -441,7 +554,7 @@
     });
   })();
 
-  /* ── 14. Formulário e miudezas ────────────────────────────────────────── */
+  /* ── 15. Formulário e miudezas ────────────────────────────────────────── */
   (function form() {
     var f = $("#orderForm"), msg = $("#orderMsg");
     if (!f) return;
@@ -462,7 +575,7 @@
   var year = $("#year");
   if (year) year.textContent = new Date().getFullYear();
 
-  /* ── 15. Loop de scroll ───────────────────────────────────────────────── */
+  /* ── 16. Loop de scroll ───────────────────────────────────────────────── */
   (function loop() {
     var pending = false;
     var run = function () {
