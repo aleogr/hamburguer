@@ -18,6 +18,20 @@ python3 -m http.server 8000
 Abrir o `index.html` com dois cliques também funciona, mas prefira o servidor:
 alguns navegadores bloqueiam vídeo e fontes via `file://`.
 
+## Um arquivo só, para mandar por aí
+
+```bash
+python3 tools/build-standalone.py   # gera dist/brasa-standalone.html
+```
+
+Isso empacota CSS, JavaScript, fontes e imagens dentro de um único HTML de
+~800 KB, que abre com dois cliques em qualquer lugar — sem servidor, sem
+pasta de assets junto. Bom para mandar para alguém aprovar o layout.
+
+Para publicar de verdade, use os arquivos normais: separados, eles carregam
+em paralelo e cada um fica em cache por conta própria. E lembre que o vídeo
+de fundo não entra no arquivo único (o hero fica com a brasa em canvas).
+
 ## Estrutura
 
 ```
@@ -30,6 +44,7 @@ assets/fonts/               Anton e Inter em woff2, servidas do próprio site
 assets/video/               vazia — instruções em assets/video/README.md
 tools/gen-placeholders.py   regera os SVGs de placeholder
 tools/fetch-fonts.sh        rebaixa as fontes e regera o fonts.css
+tools/build-standalone.py   empacota tudo num HTML só (dist/, fora do git)
 ```
 
 As fontes são hospedadas aqui em vez de puxadas do Google: uma requisição a
