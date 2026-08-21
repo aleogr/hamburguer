@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BRASA — Hamburgueria de fogo alto</title>
+<meta name="description" content="BRASA: blend próprio, chapa a 300°C e pão feito na casa. Hamburgueria de fogo alto em São Paulo e no Rio.">
+<meta name="theme-color" content="#0b0a09">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="BRASA — Hamburgueria de fogo alto">
+<meta property="og:description" content="Carne, fogo e nada de firula.">
+<meta property="og:image" content="assets/img/hero-poster.svg">
+
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ══ PRELOADER ══════════════════════════════════════════════ -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader__inner">
+    <span class="loader__word">BRASA</span>
+    <span class="loader__count" id="loaderCount">0</span>
+  </div>
+  <div class="loader__bar"><i id="loaderBar"></i></div>
+</div>
+
+<!-- ══ CURSOR (desktop) ══════════════════════════════════════ -->
+<div class="cursor" id="cursor" aria-hidden="true"><span class="cursor__label" id="cursorLabel"></span></div>
+
+<a class="skip" href="#manifesto">Pular para o conteúdo</a>
+
+<!-- ══ HEADER ════════════════════════════════════════════════ -->
+<header class="nav" id="nav">
+  <a href="#topo" class="nav__brand" data-cursor="topo">
+    <svg viewBox="0 0 40 26" class="nav__mark" aria-hidden="true">
+      <path d="M2 12c0-6 8-10 18-10s18 4 18 10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path d="M2 17h36" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path d="M4 22c4 2 10 2 16 2s12 0 16-2" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <span>BRASA</span>
+  </a>
+
+  <nav class="nav__links" aria-label="Navegação principal">
+    <a href="#menu" data-nav>Menu</a>
+    <a href="#processo" data-nav>Processo</a>
+    <a href="#casa" data-nav>A casa</a>
+    <a href="#unidades" data-nav>Unidades</a>
+  </nav>
+
+  <div class="nav__right">
+    <a href="#pedido" class="btn btn--sm" data-nav>Peça agora</a>
+    <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="overlay">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ══ OVERLAY MENU ══════════════════════════════════════════ -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+  <nav class="overlay__nav">
+    <a href="#menu" data-nav><i>01</i>Menu</a>
+    <a href="#processo" data-nav><i>02</i>Processo</a>
+    <a href="#casa" data-nav><i>03</i>A casa</a>
+    <a href="#unidades" data-nav><i>04</i>Unidades</a>
+    <a href="#pedido" data-nav><i>05</i>Peça agora</a>
+  </nav>
+  <div class="overlay__foot">
+    <p>Vila Madalena · Pinheiros · Botafogo</p>
+    <p><a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a> · <a href="mailto:oi@brasaburger.com.br">oi@brasaburger.com.br</a></p>
+  </div>
+</div>
+
+<main id="main">
+
+<!-- ══ 01 · HERO ═════════════════════════════════════════════ -->
+<section class="hero" id="topo" data-theme="dark">
+  <div class="hero__media">
+    <!-- VÍDEO DE FUNDO DO HERO
+         Coloque hero.mp4 / hero.webm em assets/video/ e descomente as duas
+         linhas <source> abaixo. Enquanto isso, o <canvas> logo em seguida
+         desenha uma brasa animada no lugar do vídeo.
+         Instruções de conversão: assets/video/README.md -->
+    <video class="hero__video" id="heroVideo" autoplay muted loop playsinline preload="none"
+           poster="assets/img/hero-poster.svg">
+      <!-- <source src="assets/video/hero.webm" type="video/webm"> -->
+      <!-- <source src="assets/video/hero.mp4" type="video/mp4"> -->
+    </video>
+    <canvas class="hero__fallback" id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="hero__scrim"></div>
+    <div class="grain" aria-hidden="true"></div>
+  </div>
+
+  <div class="hero__content">
+    <p class="eyebrow reveal">Desde 2016 · São Paulo &amp; Rio</p>
+    <h1 class="hero__title">
+      <span class="line"><span>CARNE,</span></span>
+      <span class="line"><span>FOGO</span></span>
+      <span class="line"><span>E NADA</span></span>
+      <span class="line"><span>DE FIRULA.</span></span>
+    </h1>
+    <p class="hero__sub reveal">Blend próprio moído todo dia, chapa a 300°C e pão de brioche assado na casa. Só isso. É o suficiente.</p>
+    <div class="hero__cta reveal">
+      <a href="#menu" class="btn" data-nav>Ver o menu</a>
+      <a href="#pedido" class="btn btn--ghost" data-nav>Peça agora</a>
+    </div>
+  </div>
+
+  <a href="#manifesto" class="scroll-cue" data-nav aria-label="Descer">
+    <span>role</span>
+    <i></i>
+  </a>
+
+  <div class="hero__meta">
+    <span>SP · RJ</span>
+    <span aria-hidden="true">—</span>
+    <span>Ter a Dom · 18h–00h</span>
+  </div>
+</section>
+
+<!-- ══ TICKER ════════════════════════════════════════════════ -->
+<div class="ticker" data-theme="light" aria-hidden="true">
+  <div class="ticker__track">
+    <span>SMASH NA CHAPA</span><i>✦</i><span>BLEND 100% ANGUS</span><i>✦</i><span>PÃO FEITO NA CASA</span><i>✦</i><span>PICLES ARTESANAL</span><i>✦</i>
+    <span>SMASH NA CHAPA</span><i>✦</i><span>BLEND 100% ANGUS</span><i>✦</i><span>PÃO FEITO NA CASA</span><i>✦</i><span>PICLES ARTESANAL</span><i>✦</i>
+  </div>
+</div>
+
+<!-- ══ 02 · MANIFESTO ════════════════════════════════════════ -->
+<section class="manifesto" id="manifesto" data-theme="dark">
+  <div class="wrap">
+    <p class="section-tag reveal"><i>01</i> Manifesto</p>
+    <p class="manifesto__text" data-fill>
+      A gente abriu uma hamburgueria porque estava cansado de hambúrguer ruim.
+      Nada de vinte ingredientes escondendo carne sem graça. Aqui é blend moído
+      na hora, chapa quente de verdade, sal, e o pão certo. O resto é conversa.
+    </p>
+    <div class="manifesto__grid">
+      <div class="stat reveal"><b data-count="300">0</b><span>°C na chapa</span></div>
+      <div class="stat reveal"><b data-count="48">0</b><span>horas de maturação</span></div>
+      <div class="stat reveal"><b data-count="3">0</b><span>casas abertas</span></div>
+      <div class="stat reveal"><b data-count="9">0</b><span>anos de fogo</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 · MENU (sticky + troca de imagem) ══════════════════ -->
+<section class="menu" id="menu" data-theme="dark">
+  <div class="menu__inner">
+
+    <div class="menu__visual">
+      <div class="menu__frame">
+        <img src="assets/img/menu-classico.svg" alt="" data-menu-img="classico" class="is-on">
+        <img src="assets/img/menu-fume.svg"     alt="" data-menu-img="fume">
+        <img src="assets/img/menu-diablo.svg"   alt="" data-menu-img="diablo">
+        <img src="assets/img/menu-trufa.svg"    alt="" data-menu-img="trufa">
+        <img src="assets/img/menu-verde.svg"    alt="" data-menu-img="verde">
+        <img src="assets/img/menu-bacon.svg"    alt="" data-menu-img="bacon">
+        <div class="grain" aria-hidden="true"></div>
+      </div>
+      <p class="menu__caption"><span id="menuCaption">Clássico Brasa</span></p>
+    </div>
+
+    <div class="menu__list">
+      <header class="menu__head">
+        <p class="section-tag"><i>02</i> O menu</p>
+        <h2 class="h-lg">Seis<br>hambúrgueres.<br>Zero enrolação.</h2>
+      </header>
+
+      <article class="item" data-menu-item="classico" data-cursor="ver">
+        <div class="item__top"><h3>Clássico Brasa</h3><span class="item__price">R$ 39</span></div>
+        <p>Smash duplo, cheddar maturado, cebola caramelizada no próprio suco, picles da casa e molho brasa. Pão brioche.</p>
+        <ul class="tags"><li>duplo</li><li>mais pedido</li></ul>
+      </article>
+
+      <article class="item" data-menu-item="fume" data-cursor="ver">
+        <div class="item__top"><h3>Fumê</h3><span class="item__price">R$ 46</span></div>
+        <p>Blend 180g mal passado, queijo defumado, bacon artesanal em manta e barbecue de café. Cebola crispy por cima.</p>
+        <ul class="tags"><li>defumado</li><li>180g</li></ul>
+      </article>
+
+      <article class="item" data-menu-item="diablo" data-cursor="ver">
+        <div class="item__top"><h3>Picante Diablo</h3><span class="item__price">R$ 44</span></div>
+        <p>Smash duplo, pepper jack derretido, jalapeño em conserva, maionese de chipotle e um fio de mel picante.</p>
+        <ul class="tags"><li>ardido</li><li>duplo</li></ul>
+      </article>
+
+      <article class="item" data-menu-item="trufa" data-cursor="ver">
+        <div class="item__top"><h3>Trufa Negra</h3><span class="item__price">R$ 58</span></div>
+        <p>Blend 180g, gruyère, cogumelos salteados na manteiga e maionese trufada. Pão australiano.</p>
+        <ul class="tags"><li>edição fixa</li><li>180g</li></ul>
+      </article>
+
+      <article class="item" data-menu-item="verde" data-cursor="ver">
+        <div class="item__top"><h3>Verde</h3><span class="item__price">R$ 41</span></div>
+        <p>Burger de grão-de-bico e beterraba assada, tahine defumado, picles de pepino e rúcula. Pão integral.</p>
+        <ul class="tags"><li>vegetariano</li><li>vegano sob pedido</li></ul>
+      </article>
+
+      <article class="item" data-menu-item="bacon" data-cursor="ver">
+        <div class="item__top"><h3>Bacon Melt</h3><span class="item__price">R$ 52</span></div>
+        <p>Smash triplo, muito American cheese, bacon crocante e molho especial. Sem alface, sem tomate, sem desculpa.</p>
+        <ul class="tags"><li>triplo</li><li>pesado</li></ul>
+      </article>
+
+      <div class="menu__extra reveal">
+        <div>
+          <h4>Para acompanhar</h4>
+          <p>Batata rústica com alecrim · Onion rings · Chili fries · Salada de repolho</p>
+        </div>
+        <div>
+          <h4>Para beber</h4>
+          <p>Chope artesanal da casa · Milkshake de baunilha queimada · Limonada de gengibre</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 04 · BREAK EM PARALLAX ════════════════════════════════ -->
+<section class="break" data-theme="dark" aria-label="Nossa cozinha">
+  <div class="break__media">
+    <img src="assets/img/break-fogo.svg" alt="Chapa em brasa na cozinha da BRASA" data-parallax="0.18">
+    <div class="grain" aria-hidden="true"></div>
+  </div>
+  <blockquote class="break__quote">
+    <p data-fill>“Hambúrguer bom é questão de temperatura e de pressa. Chapa quente, mão rápida, prato na mesa.”</p>
+    <cite>Dona Ivete — chefe de cozinha desde o primeiro dia</cite>
+  </blockquote>
+</section>
+
+<!-- ══ 05 · PROCESSO (scroll horizontal travado) ═════════════ -->
+<section class="process" id="processo" data-theme="light">
+  <div class="process__sticky">
+    <div class="process__head">
+      <p class="section-tag"><i>03</i> Como fazemos</p>
+      <div class="process__bar"><i id="processBar"></i></div>
+    </div>
+    <div class="process__track" id="processTrack">
+      <article class="step">
+        <span class="step__num">01</span>
+        <div class="step__img"><img src="assets/img/processo-01.svg" alt="Blend de carne sendo moído"></div>
+        <h3>A carne</h3>
+        <p>Blend de acém, peito e costela moído todo dia às 14h. Nada congelado, nada de véspera. Porção pesada na hora e nunca amassada antes da chapa.</p>
+      </article>
+      <article class="step">
+        <span class="step__num">02</span>
+        <div class="step__img"><img src="assets/img/processo-02.svg" alt="Hambúrguer sendo prensado na chapa"></div>
+        <h3>O fogo</h3>
+        <p>Chapa a 300°C. A bola vai inteira e é prensada uma vez só, por doze segundos, para formar a crosta. Depois disso ninguém encosta.</p>
+      </article>
+      <article class="step">
+        <span class="step__num">03</span>
+        <div class="step__img"><img src="assets/img/processo-03.svg" alt="Hambúrguer sendo montado"></div>
+        <h3>A montagem</h3>
+        <p>Pão brioche tostado na manteiga, queijo sobre a carne ainda na chapa, molho embaixo e em cima. Da chapa até a sua mesa: noventa segundos.</p>
+      </article>
+      <article class="step step--end">
+        <span class="step__num">04</span>
+        <h3>E aí é com você.</h3>
+        <p>Come com a mão. Não corta ao meio. Não pede para tirar o queijo.</p>
+        <a href="#pedido" class="btn" data-nav>Peça agora</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 · A CASA ═══════════════════════════════════════════ -->
+<section class="about" id="casa" data-theme="dark">
+  <div class="wrap about__grid">
+    <div class="about__media reveal">
+      <img src="assets/img/sobre-equipe.svg" alt="Equipe da BRASA na cozinha" data-parallax="0.1">
+      <div class="grain" aria-hidden="true"></div>
+    </div>
+    <div class="about__text">
+      <p class="section-tag reveal"><i>04</i> A casa</p>
+      <h2 class="h-lg reveal">Começou numa<br>garagem em 2016.</h2>
+      <p class="reveal">Éramos duas pessoas, uma chapa emprestada e uma fila que dobrava a esquina antes das oito. Nove anos depois somos trinta e quatro, três casas, e a mesma chapa — hoje aposentada, pendurada na parede da Vila Madalena.</p>
+      <p class="reveal">O cardápio quase não mudou. Mudou o pão, que agora é nosso, e o picles, que a gente aprendeu a fazer direito. O resto continua igual porque não tinha o que consertar.</p>
+      <ul class="about__facts">
+        <li class="reveal"><b>Carne</b><span>Angus de pasto, moído na casa</span></li>
+        <li class="reveal"><b>Pão</b><span>Brioche assado toda manhã</span></li>
+        <li class="reveal"><b>Picles</b><span>Curtido por 48h em casa</span></li>
+        <li class="reveal"><b>Fila</b><span>Sem reserva. Sempre foi assim.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 · UNIDADES ═════════════════════════════════════════ -->
+<section class="places" id="unidades" data-theme="light">
+  <div class="wrap">
+    <p class="section-tag reveal"><i>05</i> Unidades</p>
+    <h2 class="h-lg reveal">Três casas.<br>Mesma chapa.</h2>
+
+    <div class="places__grid">
+      <article class="place reveal" data-cursor="mapa">
+        <div class="place__img"><img src="assets/img/casa-vila.svg" alt="Casa da Vila Madalena"></div>
+        <h3>Vila Madalena</h3>
+        <p class="place__addr">R. Aspicuelta, 000 — São Paulo/SP</p>
+        <p class="place__hours">Ter a Dom · 18h — 00h</p>
+        <a href="https://maps.google.com" target="_blank" rel="noopener" class="link">Ver no mapa</a>
+      </article>
+
+      <article class="place reveal" data-cursor="mapa">
+        <div class="place__img"><img src="assets/img/casa-pinheiros.svg" alt="Casa de Pinheiros"></div>
+        <h3>Pinheiros</h3>
+        <p class="place__addr">R. dos Pinheiros, 000 — São Paulo/SP</p>
+        <p class="place__hours">Ter a Dom · 18h — 01h</p>
+        <a href="https://maps.google.com" target="_blank" rel="noopener" class="link">Ver no mapa</a>
+      </article>
+
+      <article class="place reveal" data-cursor="mapa">
+        <div class="place__img"><img src="assets/img/casa-botafogo.svg" alt="Casa de Botafogo"></div>
+        <h3>Botafogo</h3>
+        <p class="place__addr">R. Voluntários da Pátria, 000 — Rio de Janeiro/RJ</p>
+        <p class="place__hours">Qua a Dom · 18h — 00h</p>
+        <a href="https://maps.google.com" target="_blank" rel="noopener" class="link">Ver no mapa</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 · PEDIDO ═══════════════════════════════════════════ -->
+<section class="order" id="pedido" data-theme="dark">
+  <div class="order__media">
+    <!-- Mesma coisa aqui: descomente quando cozinha.mp4/.webm existirem.
+         Sem vídeo, fica valendo o poster estático. -->
+    <video class="order__video" id="orderVideo" muted loop playsinline preload="none" poster="assets/img/break-fogo.svg">
+      <!-- <source src="assets/video/cozinha.webm" type="video/webm"> -->
+      <!-- <source src="assets/video/cozinha.mp4" type="video/mp4"> -->
+    </video>
+    <div class="order__scrim"></div>
+    <div class="grain" aria-hidden="true"></div>
+  </div>
+
+  <div class="wrap order__content">
+    <p class="section-tag reveal"><i>06</i> Peça agora</p>
+    <h2 class="h-xl reveal">TÁ COM<br>FOME?</h2>
+    <p class="order__sub reveal">Delivery próprio num raio de 6 km de cada casa. Balcão sempre aberto, sem reserva.</p>
+
+    <div class="order__actions reveal">
+      <a href="tel:+551140028922" class="btn btn--lg">Ligar e pedir</a>
+      <a href="https://wa.me/5511000000000" target="_blank" rel="noopener" class="btn btn--ghost btn--lg">WhatsApp</a>
+    </div>
+
+    <form class="order__form" id="orderForm" novalidate>
+      <p class="order__form-title">Ou deixe seu e-mail e a gente avisa das edições limitadas.</p>
+      <div class="field">
+        <label for="email" class="sr-only">Seu e-mail</label>
+        <input type="email" id="email" name="email" placeholder="seu@email.com.br" required autocomplete="email">
+        <button type="submit" class="btn btn--sm">Quero saber</button>
+      </div>
+      <p class="order__msg" id="orderMsg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════ -->
+<footer class="foot" data-theme="dark">
+  <div class="wrap">
+    <div class="foot__top">
+      <p class="foot__logo">BRASA</p>
+      <nav class="foot__nav" aria-label="Rodapé">
+        <a href="#menu" data-nav>Menu</a>
+        <a href="#processo" data-nav>Processo</a>
+        <a href="#casa" data-nav>A casa</a>
+        <a href="#unidades" data-nav>Unidades</a>
+        <a href="#pedido" data-nav>Peça agora</a>
+      </nav>
+      <div class="foot__social">
+        <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://tiktok.com" target="_blank" rel="noopener">TikTok</a>
+        <a href="mailto:oi@brasaburger.com.br">oi@brasaburger.com.br</a>
+      </div>
+    </div>
+    <div class="foot__bottom">
+      <p>© <span id="year">2026</span> BRASA Hamburgueria. Todos os direitos reservados.</p>
+      <p>Feito com fogo alto em São Paulo.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
