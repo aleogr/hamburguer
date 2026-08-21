@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hamburgueria Maná — hambúrguer artesanal na brasa</title>
+<meta name="description" content="Hamburgueria Maná: hambúrguer artesanal na brasa, pão de brioche e maionese da casa. Especiais, tradicionais, combos e bebidas.">
+<meta name="theme-color" content="#210A09">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hamburgueria Maná — hambúrguer artesanal na brasa">
+<meta property="og:description" content="Especiais, tradicionais, combos e bebidas. Feito na brasa, na hora.">
+<meta property="og:image" content="assets/img/burger-hero.webp">
+
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ══ PRELOADER ══════════════════════════════════════════════ -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader__inner">
+    <img src="assets/img/logo-mana.webp" alt="" class="loader__logo">
+    <span class="loader__count" id="loaderCount">0</span>
+  </div>
+  <div class="loader__bar"><i id="loaderBar"></i></div>
+</div>
+
+<!-- ══ CURSOR (desktop) ══════════════════════════════════════ -->
+<div class="cursor" id="cursor" aria-hidden="true"><span class="cursor__label" id="cursorLabel"></span></div>
+
+<a class="skip" href="#manifesto">Pular para o conteúdo</a>
+
+<!-- ══ HEADER ════════════════════════════════════════════════ -->
+<header class="nav" id="nav">
+  <a href="#topo" class="nav__brand" data-cursor="topo">
+    <img src="assets/img/logo-mana.webp" alt="" class="nav__logo">
+    <span>MANÁ</span>
+  </a>
+
+  <nav class="nav__links" aria-label="Navegação principal">
+    <a href="#especiais" data-nav>Especiais</a>
+    <a href="#tradicionais" data-nav>Tradicionais</a>
+    <a href="#combos" data-nav>Combos</a>
+    <a href="#bebidas" data-nav>Bebidas</a>
+  </nav>
+
+  <div class="nav__right">
+    <a href="#pedido" class="btn btn--sm" data-nav>Peça agora</a>
+    <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="overlay">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ══ OVERLAY MENU ══════════════════════════════════════════ -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+  <nav class="overlay__nav">
+    <a href="#especiais" data-nav><i>01</i>Especiais</a>
+    <a href="#tradicionais" data-nav><i>02</i>Tradicionais</a>
+    <a href="#combos" data-nav><i>03</i>Combos</a>
+    <a href="#bebidas" data-nav><i>04</i>Bebidas</a>
+    <a href="#casa" data-nav><i>05</i>A casa</a>
+    <a href="#pedido" data-nav><i>06</i>Peça agora</a>
+  </nav>
+  <div class="overlay__foot">
+    <!-- TODO: trocar pelos contatos reais da Maná -->
+    <p>Hamburgueria &amp; Lanches</p>
+    <p><a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a> · <a href="tel:+550000000000">(00) 00000-0000</a></p>
+  </div>
+</div>
+
+<main id="main">
+
+<!-- ══ 01 · HERO ═════════════════════════════════════════════ -->
+<section class="hero" id="topo" data-theme="dark">
+  <div class="hero__media">
+    <!-- VÍDEO DE FUNDO DO HERO
+         Coloque hero.mp4 / hero.webm em assets/video/ e descomente as duas
+         linhas <source> abaixo. Enquanto isso, o <canvas> logo em seguida
+         desenha uma brasa animada no lugar do vídeo.
+         Instruções de conversão: assets/video/README.md -->
+    <video class="hero__video" id="heroVideo" autoplay muted loop playsinline preload="none"
+           poster="assets/img/hero-poster.svg">
+      <!-- <source src="assets/video/hero.webm" type="video/webm"> -->
+      <!-- <source src="assets/video/hero.mp4" type="video/mp4"> -->
+    </video>
+    <canvas class="hero__fallback" id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="hero__scrim"></div>
+    <div class="grain" aria-hidden="true"></div>
+  </div>
+
+  <img src="assets/img/burger-hero.webp" alt="" class="hero__burger" data-parallax="0.08">
+
+  <div class="hero__content">
+    <p class="eyebrow reveal">Hamburgueria &amp; Lanches</p>
+    <h1 class="hero__title">
+      <span class="line"><span>NA BRASA,</span></span>
+      <span class="line"><span>NA HORA,</span></span>
+      <span class="line"><span>DO JEITO</span></span>
+      <span class="line"><span>CERTO.</span></span>
+    </h1>
+    <p class="hero__sub reveal">Hambúrguer artesanal de 180 g feito na brasa, pão de brioche selado e maionese artesanal da casa. Simples assim.</p>
+    <div class="hero__cta reveal">
+      <a href="#especiais" class="btn" data-nav>Ver o cardápio</a>
+      <a href="#pedido" class="btn btn--ghost" data-nav>Peça agora</a>
+    </div>
+  </div>
+
+  <a href="#manifesto" class="scroll-cue" data-nav aria-label="Descer">
+    <span>role</span>
+    <i></i>
+  </a>
+
+  <div class="hero__meta">
+    <span>36 itens no cardápio</span>
+    <span aria-hidden="true">—</span>
+    <span>Especiais · Tradicionais · Combos · Bebidas</span>
+  </div>
+</section>
+
+<!-- ══ TICKER ════════════════════════════════════════════════ -->
+<div class="ticker" data-theme="light" aria-hidden="true">
+  <div class="ticker__track">
+    <span>ARTESANAL NA BRASA</span><i>✦</i><span>180 G DE HAMBÚRGUER</span><i>✦</i><span>PÃO DE BRIOCHE</span><i>✦</i><span>MAIONESE DA CASA</span><i>✦</i>
+    <span>ARTESANAL NA BRASA</span><i>✦</i><span>180 G DE HAMBÚRGUER</span><i>✦</i><span>PÃO DE BRIOCHE</span><i>✦</i><span>MAIONESE DA CASA</span><i>✦</i>
+  </div>
+</div>
+
+<!-- ══ 02 · MANIFESTO ════════════════════════════════════════ -->
+<section class="manifesto" id="manifesto" data-theme="dark">
+  <div class="wrap">
+    <p class="section-tag reveal"><i>01</i> A Maná</p>
+    <p class="manifesto__text" data-fill>
+      Hambúrguer artesanal feito na brasa, pão de brioche selado na chapa e
+      maionese artesanal da casa. Do X-Burguer de vinte reais ao Meio Quilo,
+      é a mesma carne e o mesmo cuidado. O resto é fome.
+    </p>
+    <div class="manifesto__grid">
+      <div class="stat reveal"><b data-count="6">0</b><span>especiais</span></div>
+      <div class="stat reveal"><b data-count="7">0</b><span>tradicionais</span></div>
+      <div class="stat reveal"><b data-count="9">0</b><span>combos</span></div>
+      <div class="stat reveal"><b data-count="500">0</b><span>gramas no X-Meio Quilo</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 · ESPECIAIS ════════════════════════════════════════
+     Palco fixo: o lanche fica ao fundo, em tela cheia, e troca conforme
+     o painel de texto correspondente passa pelo meio da tela. -->
+<section class="stage-sec" id="especiais" data-theme="dark">
+
+  <div class="stage" aria-hidden="true">
+    <div class="stage__glow"></div>
+    <div class="stage__photos">
+      <img src="assets/img/burger-classico.webp" alt="" class="stage__photo is-on" data-menu-img="classico">
+      <img src="assets/img/burger-hothoney.webp" alt="" class="stage__photo" data-menu-img="hothoney" loading="lazy">
+      <img src="assets/img/burger-queijos.webp" alt="" class="stage__photo" data-menu-img="queijos" loading="lazy">
+      <img src="assets/img/burger-texas.webp" alt="" class="stage__photo" data-menu-img="texas" loading="lazy">
+      <img src="assets/img/burger-romeu.webp" alt="" class="stage__photo" data-menu-img="romeu" loading="lazy">
+      <img src="assets/img/burger-big.webp" alt="" class="stage__photo" data-menu-img="big" loading="lazy">
+    </div>
+    <div class="stage__scrim"></div>
+    <div class="grain"></div>
+    <p class="stage__name" id="stageName">Clássico Maná</p>
+    <div class="stage__dots">
+      <i data-dot="classico" class="is-on"></i>
+      <i data-dot="hothoney"></i>
+      <i data-dot="queijos"></i>
+      <i data-dot="texas"></i>
+      <i data-dot="romeu"></i>
+      <i data-dot="big"></i>
+    </div>
+  </div>
+
+  <div class="stage__flow">
+    <header class="stage__head">
+      <p class="section-tag"><i>02</i> Especiais</p>
+      <h2 class="h-lg">Os seis<br>da casa.</h2>
+      <p class="stage__hint">Uma rolada, um lanche — role para ver os seis</p>
+    </header>
+
+    <article class="panel" data-menu-item="classico">
+      <div class="panel__inner">
+        <p class="panel__index">01 — 06</p>
+        <div class="panel__top"><h3>Clássico Maná</h3><span class="panel__price">R$ 34,00</span></div>
+        <p class="panel__desc">Entre o macio brioche selado e a força do hambúrguer artesanal, a frescura da horta se encontra com a suavidade do cheddar e a alma da maionese artesanal. Assim se revela o Clássico Maná.</p>
+        <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li><li>Bacon crocante</li><li>Maionese artesanal</li><li>Alface e tomate</li></ul>
+      </div>
+    </article>
+
+    <article class="panel" data-menu-item="hothoney">
+      <div class="panel__inner">
+        <p class="panel__index">02 — 06</p>
+        <div class="panel__top"><h3>Hot Honey Bacon</h3><span class="panel__price">R$ 40,00</span></div>
+        <p class="panel__desc">Combinando um delicioso hambúrguer artesanal com um molho de bacon com mel e uma pitada de pimenta para um sabor inigualável, temos o Hot Honey Bacon.</p>
+        <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li><li>Molho de bacon, mel e pimenta</li><li>Alfaces frescas</li></ul>
+      </div>
+    </article>
+
+    <article class="panel" data-menu-item="queijos">
+      <div class="panel__inner">
+        <p class="panel__index">03 — 06</p>
+        <div class="panel__top"><h3>Queijo &amp; Mais Queijo</h3><span class="panel__price">R$ 38,00</span></div>
+        <p class="panel__desc">Combinando a suculência do hambúrguer artesanal com a intensidade dos queijos e o toque da cebola caramelizada, surge o irresistível.</p>
+        <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li><li>Queijo muçarela</li><li>Queijo catupiry</li><li>Cebola caramelizada</li><li>Maionese artesanal</li></ul>
+      </div>
+    </article>
+
+    <article class="panel" data-menu-item="texas">
+      <div class="panel__inner">
+        <p class="panel__index">04 — 06</p>
+        <div class="panel__top"><h3>Texas Burguer</h3><span class="panel__price">R$ 34,00</span></div>
+        <p class="panel__desc">Uma referência internacional de um clássico hambúrguer americano: um molho conislau que leva repolho roxo, cenoura, maionese artesanal e um tempero que só a Maná tem.</p>
+        <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li><li>Maionese artesanal</li><li>Barbecue artesanal levemente apimentado</li><li>Molho conislau</li></ul>
+      </div>
+    </article>
+
+    <article class="panel" data-menu-item="romeu">
+      <div class="panel__inner">
+        <p class="panel__index">05 — 06</p>
+        <div class="panel__top"><h3>Romeu e Julieta</h3><span class="panel__price">R$ 38,00</span></div>
+        <p class="panel__desc">A exclusividade de um lanche que você só encontra aqui. Hambúrguer artesanal feito na brasa, um queijo colonial e uma geleia de goiabada artesanal: um mix de sabores que vai elevar seu paladar a outro nível.</p>
+        <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo colonial</li><li>Geleia de goiabada artesanal</li><li>Maionese artesanal</li></ul>
+      </div>
+    </article>
+
+    <article class="panel" data-menu-item="big">
+      <div class="panel__inner">
+        <p class="panel__index">06 — 06</p>
+        <div class="panel__top"><h3>Big Burguer</h3><span class="panel__price">R$ 48,00</span></div>
+        <p class="panel__desc">Este lanche é para você que se garante em um grande hambúrguer.</p>
+        <ul class="ings"><li>Pão de brioche</li><li>2 hambúrgueres artesanais 180 g</li><li>Queijo cheddar</li><li>Bacon crocante</li><li>Maionese artesanal</li><li>Alfaces frescas</li></ul>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ══ 04 · BREAK EM PARALLAX ════════════════════════════════ -->
+<section class="break" data-theme="dark" aria-label="X-Meio Quilo">
+  <div class="break__media">
+    <img src="assets/img/textura-madeira.webp" alt="" data-parallax="0.18">
+    <div class="grain" aria-hidden="true"></div>
+  </div>
+  <img src="assets/img/chama.webp" alt="" class="break__fire">
+  <blockquote class="break__quote">
+    <p data-fill>“Sim, um hambúrguer de respeito. Pesa mais de 500 g, feito com extrema fartura.”</p>
+    <cite>X-Meio Quilo · R$ 55,00</cite>
+  </blockquote>
+</section>
+
+<!-- ══ 05 · TRADICIONAIS ═════════════════════════════════════ -->
+<section class="cards-sec" id="tradicionais" data-theme="light">
+  <div class="wrap">
+    <p class="section-tag reveal"><i>03</i> Tradicionais</p>
+    <h2 class="h-lg reveal">O de sempre,<br>na brasa.</h2>
+
+    <div class="cards">
+      <article class="card reveal">
+        <div class="card__top"><h3>X-Burguer</h3><span class="price">R$ 20,00</span></div>
+        <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer artesanal na brasa</li><li>Presunto</li><li>Queijo muçarela</li></ul>
+      </article>
+      <article class="card reveal">
+        <div class="card__top"><h3>X-Salada</h3><span class="price">R$ 25,00</span></div>
+        <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer artesanal na brasa</li><li>Milho e ervilha</li><li>Alface e tomate</li><li>Presunto</li><li>Queijo muçarela</li></ul>
+      </article>
+      <article class="card reveal">
+        <div class="card__top"><h3>X-Egg</h3><span class="price">R$ 26,00</span></div>
+        <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer artesanal na brasa</li><li>Ovo</li><li>Milho e ervilha</li><li>Alface e tomate</li><li>Presunto</li><li>Queijo muçarela</li></ul>
+      </article>
+      <article class="card reveal">
+        <div class="card__top"><h3>X-Calabresa</h3><span class="price">R$ 29,00</span></div>
+        <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer artesanal na brasa</li><li>Calabresa</li><li>Milho e ervilha</li><li>Alface e tomate</li><li>Presunto</li><li>Queijo muçarela</li></ul>
+      </article>
+      <article class="card reveal">
+        <div class="card__top"><h3>X-Bacon</h3><span class="price">R$ 30,00</span></div>
+        <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer artesanal na brasa</li><li>Bacon em cubos</li><li>Milho e ervilha</li><li>Alface e tomate</li><li>Presunto</li><li>Queijo muçarela</li></ul>
+      </article>
+      <article class="card reveal">
+        <div class="card__top"><h3>X-Tudo</h3><span class="price">R$ 35,00</span></div>
+        <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer artesanal na brasa</li><li>Bacon em cubos</li><li>Calabresa</li><li>Ovo</li><li>Milho e ervilha</li><li>Alface e tomate</li><li>Presunto</li><li>Queijo muçarela</li></ul>
+      </article>
+      <article class="card card--wide reveal">
+        <div class="card__top"><h3>X-Meio Quilo</h3><span class="price">R$ 55,00</span></div>
+        <p class="card__desc">Sim, um hambúrguer de respeito! Pesa mais de 500 g, feito com extrema fartura.</p>
+        <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer 180 g artesanal na brasa</li><li>Bacon em cubos</li><li>Calabresa</li><li>Ovo</li><li>Salsicha</li><li>Queijo catupiry</li><li>Milho e ervilha</li><li>Alface e tomate</li><li>Presunto</li><li>2 fatias de queijo muçarela</li></ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 · COMBOS ═══════════════════════════════════════════ -->
+<section class="cards-sec" id="combos" data-theme="dark">
+  <div class="wrap">
+    <p class="section-tag reveal"><i>04</i> Combos</p>
+    <h2 class="h-lg reveal">Lanche, batata<br>e bebida.</h2>
+
+    <div class="cards cards--tight">
+      <article class="card reveal">
+        <div class="card__top"><h3>Combo Salada</h3><span class="price">R$ 35,00</span></div>
+        <ul class="ings"><li>1 X-Salada</li><li>1 batata 150 g</li><li>1 refrigerante lata</li></ul>
+      </article>
+      <article class="card reveal">
+        <div class="card__top"><h3>Combo Bacon</h3><span class="price">R$ 42,00</span></div>
+        <ul class="ings"><li>1 X-Bacon</li><li>1 batata 150 g</li><li>1 refrigerante lata</li></ul>
+      </article>
+      <article class="card reveal">
+        <div class="card__top"><h3>Combo Clássico</h3><span class="price">R$ 45,00</span></div>
+        <ul class="ings"><li>1 Clássico Maná</li><li>1 batata 150 g</li><li>1 refrigerante lata</li></ul>
+      </article>
+      <article class="card reveal">
+        <div class="card__top"><h3>Combo Texas</h3><span class="price">R$ 50,00</span></div>
+        <ul class="ings"><li>1 Texas Burguer</li><li>1 batata 150 g</li><li>1 refrigerante lata</li></ul>
+      </article>
+      <article class="card reveal">
+        <div class="card__top"><h3>Combo Casal</h3><span class="price">R$ 68,00</span></div>
+        <ul class="ings"><li>2 X-Salada</li><li>1 batata 250 g</li><li>2 refrigerantes lata</li></ul>
+      </article>
+      <article class="card reveal">
+        <div class="card__top"><h3>Combo Duplo Texas</h3><span class="price">R$ 84,00</span></div>
+        <ul class="ings"><li>2 Texas Burguer</li><li>1 batata 250 g</li><li>2 refrigerantes lata</li></ul>
+      </article>
+      <article class="card reveal">
+        <div class="card__top"><h3>Combo Perfeito</h3><span class="price">R$ 86,00</span></div>
+        <ul class="ings"><li>1 X-Tudo</li><li>1 X-Bacon</li><li>1 batata 250 g</li><li>2 refrigerantes lata</li></ul>
+      </article>
+      <article class="card reveal">
+        <div class="card__top"><h3>Combo Texas Honey</h3><span class="price">R$ 92,00</span></div>
+        <ul class="ings"><li>1 Texas Burguer</li><li>1 Hot Honey Bacon</li><li>1 batata 250 g</li><li>2 refrigerantes lata</li></ul>
+      </article>
+      <article class="card card--hero reveal">
+        <div class="card__top"><h3>Combo Galera</h3><span class="price">R$ 130,00</span></div>
+        <ul class="ings"><li>4 X-Salada</li><li>1 batata 500 g</li><li>1 refrigerante 2 litros</li></ul>
+      </article>
+    </div>
+
+    <div class="sides reveal">
+      <h3>Porções</h3>
+      <ul class="pricelist">
+        <li><span>Porção de batata M <i>250 g</i></span><b>R$ 18,00</b></li>
+        <li><span>Porção de batata G <i>500 g</i></span><b>R$ 25,00</b></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 · BEBIDAS ══════════════════════════════════════════ -->
+<section class="drinks-sec" id="bebidas" data-theme="light">
+  <div class="wrap">
+    <p class="section-tag reveal"><i>05</i> Bebidas</p>
+    <h2 class="h-lg reveal">Para descer.</h2>
+
+    <div class="drinks">
+      <ul class="pricelist reveal">
+        <li><span>Coca-Cola lata 350</span><b>R$ 6,00</b></li>
+        <li><span>Coca-Cola 600</span><b>R$ 8,00</b></li>
+        <li><span>Coca-Cola 1 litro</span><b>R$ 10,00</b></li>
+        <li><span>Coca-Cola 2 litros</span><b>R$ 15,00</b></li>
+        <li><span>Guaraná 2 litros</span><b>R$ 15,00</b></li>
+        <li><span>Refrigerante Fys</span><b>R$ 6,00</b></li>
+        <li><span>Suco Prats 300 ml</span><b>R$ 8,00</b></li>
+        <li><span>Suco Prats 900 ml</span><b>R$ 16,00</b></li>
+      </ul>
+      <ul class="pricelist reveal">
+        <li><span>Heineken long neck</span><b>R$ 12,00</b></li>
+        <li><span>Corona long neck</span><b>R$ 12,00</b></li>
+        <li><span>Sol long neck</span><b>R$ 10,00</b></li>
+        <li><span>Amstel Ultra</span><b>R$ 8,00</b></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 · PROCESSO ═════════════════════════════════════════
+     Tira horizontal: cada passo é um painel de tela inteira, com a foto
+     de fundo, e a tira desliza para o lado conforme a página desce.
+     TODO: texto escrito a partir do que o cardápio diz. Ajuste para bater
+     com o processo real da cozinha antes de publicar. -->
+<section class="process" id="processo" data-theme="dark">
+  <div class="process__sticky">
+
+    <div class="process__track" id="processTrack">
+      <article class="frame">
+        <div class="frame__media"><img src="assets/img/processo-01.svg" alt="Hambúrguer artesanal sendo preparado"></div>
+        <div class="frame__scrim"></div>
+        <div class="frame__text">
+          <span class="frame__num">01</span>
+          <h3>A carne</h3>
+          <p>Hambúrguer artesanal de 180 g, moldado na casa. É a mesma carne do Clássico e do Big Burguer — no segundo, dobrada.</p>
+        </div>
+      </article>
+
+      <article class="frame">
+        <div class="frame__media"><img src="assets/img/processo-02.svg" alt="Hambúrguer na brasa"></div>
+        <div class="frame__scrim"></div>
+        <div class="frame__text">
+          <span class="frame__num">02</span>
+          <h3>A brasa</h3>
+          <p>Tudo que é tradicional vai para a brasa. É de onde vem o gosto de defumado que chapa nenhuma consegue imitar.</p>
+        </div>
+      </article>
+
+      <article class="frame">
+        <div class="frame__media"><img src="assets/img/processo-03.svg" alt="Montagem do lanche"></div>
+        <div class="frame__scrim"></div>
+        <div class="frame__text">
+          <span class="frame__num">03</span>
+          <h3>A montagem</h3>
+          <p>Pão de brioche selado, queijo sobre a carne ainda quente e maionese artesanal em cima e embaixo. Sai fechado, sai na hora.</p>
+        </div>
+      </article>
+
+      <article class="frame frame--fim">
+        <div class="frame__text">
+          <span class="frame__num">04</span>
+          <h3>E aí é com você.</h3>
+          <p>Come com a mão. Não corta ao meio. Se for o Meio Quilo, chama reforço.</p>
+          <a href="#pedido" class="btn" data-nav>Peça agora</a>
+        </div>
+      </article>
+    </div>
+
+    <div class="process__head">
+      <p class="section-tag"><i>06</i> Como fazemos</p>
+      <div class="process__bar"><i id="processBar"></i></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ 09 · A CASA ═══════════════════════════════════════════ -->
+<!-- TODO: esta seção está com texto genérico. Conte a história real da Maná:
+     quando abriu, quem toca, o que mudou no cardápio. -->
+<section class="about" id="casa" data-theme="dark">
+  <div class="wrap about__grid">
+    <div class="about__media reveal">
+      <img src="assets/img/sobre-equipe.svg" alt="A equipe da Maná" data-parallax="0.1">
+      <div class="grain" aria-hidden="true"></div>
+    </div>
+    <div class="about__text">
+      <p class="section-tag reveal"><i>07</i> A casa</p>
+      <h2 class="h-lg reveal">Hamburgueria<br>&amp; Lanches.</h2>
+      <p class="reveal">O cardápio se divide em dois times. De um lado os tradicionais, feitos na brasa, com presunto, muçarela e aquele milho com ervilha que ninguém aqui pensa em tirar. Do outro os especiais, no pão de brioche, com 180 g de hambúrguer artesanal e molho feito na casa.</p>
+      <p class="reveal">Entre um e outro cabe o dia inteiro: o X-Burguer que resolve a fome de vinte reais e o Meio Quilo que resolve a de quatro pessoas.</p>
+      <ul class="about__facts">
+        <li class="reveal"><b>Carne</b><span>Hambúrguer artesanal de 180 g</span></li>
+        <li class="reveal"><b>Fogo</b><span>Brasa nos tradicionais</span></li>
+        <li class="reveal"><b>Pão</b><span>Brioche nos especiais</span></li>
+        <li class="reveal"><b>Molho</b><span>Maionese artesanal da casa</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 10 · PEDIDO ═══════════════════════════════════════════ -->
+<section class="order" id="pedido" data-theme="dark">
+  <div class="order__media">
+    <!-- Mesma coisa aqui: descomente quando cozinha.mp4/.webm existirem.
+         Sem vídeo, fica valendo o poster estático. -->
+    <video class="order__video" id="orderVideo" muted loop playsinline preload="none" poster="assets/img/hero-poster.svg">
+      <!-- <source src="assets/video/cozinha.webm" type="video/webm"> -->
+      <!-- <source src="assets/video/cozinha.mp4" type="video/mp4"> -->
+    </video>
+    <div class="order__scrim"></div>
+    <div class="grain" aria-hidden="true"></div>
+  </div>
+
+  <div class="wrap order__content">
+    <p class="section-tag reveal"><i>08</i> Peça agora</p>
+    <h2 class="h-xl reveal">TÁ COM<br>FOME?</h2>
+    <p class="order__sub reveal">Chama no WhatsApp ou liga. O balcão está aberto.</p>
+
+    <!-- TODO: telefone, WhatsApp e endereço reais da Maná -->
+    <div class="order__actions reveal">
+      <a href="tel:+550000000000" class="btn btn--lg">Ligar e pedir</a>
+      <a href="https://wa.me/550000000000" target="_blank" rel="noopener" class="btn btn--ghost btn--lg">WhatsApp</a>
+    </div>
+
+    <div class="order__where reveal">
+      <div>
+        <h3>Onde estamos</h3>
+        <p>Rua a preencher, 000 — Bairro<br>Cidade/UF</p>
+      </div>
+      <div>
+        <h3>Horário</h3>
+        <p>A preencher<br>Ex.: Ter a Dom · 18h — 23h</p>
+      </div>
+    </div>
+
+    <form class="order__form" id="orderForm" novalidate>
+      <p class="order__form-title">Deixe seu e-mail e a gente avisa das promoções.</p>
+      <div class="field">
+        <label for="email" class="sr-only">Seu e-mail</label>
+        <input type="email" id="email" name="email" placeholder="seu@email.com.br" required autocomplete="email">
+        <button type="submit" class="btn btn--sm">Quero saber</button>
+      </div>
+      <p class="order__msg" id="orderMsg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════ -->
+<footer class="foot" data-theme="dark">
+  <div class="wrap">
+    <div class="foot__top">
+      <div class="foot__brand">
+        <img src="assets/img/logo-mana.webp" alt="Hamburgueria Maná" class="foot__logo">
+      </div>
+      <nav class="foot__nav" aria-label="Rodapé">
+        <a href="#especiais" data-nav>Especiais</a>
+        <a href="#tradicionais" data-nav>Tradicionais</a>
+        <a href="#combos" data-nav>Combos</a>
+        <a href="#bebidas" data-nav>Bebidas</a>
+        <a href="#casa" data-nav>A casa</a>
+        <a href="#pedido" data-nav>Peça agora</a>
+      </nav>
+      <div class="foot__social">
+        <!-- TODO: redes sociais e e-mail reais -->
+        <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://wa.me/550000000000" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="tel:+550000000000">(00) 00000-0000</a>
+      </div>
+    </div>
+    <div class="foot__bottom">
+      <p>© <span id="year">2026</span> Hamburgueria Maná. Todos os direitos reservados.</p>
+      <p>Preços sujeitos a alteração sem aviso prévio.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

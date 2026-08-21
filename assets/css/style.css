@@ -1,0 +1,761 @@
+/* ==========================================================================
+   Hamburgueria Maná — hambúrguer artesanal na brasa
+   1. Tokens e reset
+   2. Tipografia e utilitários
+   3. Loader / cursor / grão
+   4. Navegação e overlay
+   5. Hero
+   6. Ticker
+   7. Manifesto
+   8. Especiais (palco de tela cheia)
+   9. Break em parallax
+   10. Cartões de cardápio (tradicionais e combos)
+   11. Bebidas e listas de preço
+   12. Processo (scroll horizontal)
+   13. A casa
+   14. Pedido
+   15. Rodapé
+   16. Responsivo
+   17. Movimento reduzido
+   ========================================================================== */
+
+/* ── 1. Tokens e reset ─────────────────────────────────────────────────── */
+:root{
+  /* amostradas direto do cardápio em PDF da Maná */
+  --ink:#210a09;          /* marrom quase preto do fundo */
+  --ink-soft:#2e0d08;
+  --cream:#f4e9df;
+  --cream-dim:rgba(244,233,223,.64);
+  --ember:#ff951b;        /* laranja das pílulas de preço */
+  --ember-lit:#ffb454;
+  --ember-text:#ff951b;   /* mesmo laranja quando é texto sobre o escuro */
+  --line:rgba(244,233,223,.14);
+
+  --bg:var(--ink);
+  --fg:var(--cream);
+  --fg-dim:var(--cream-dim);
+  --rule:var(--line);
+
+  --pad:clamp(1.25rem,5vw,5rem);
+  --maxw:1440px;
+
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --dur:.7s;
+}
+
+/* tema claro aplicado por seção via JS (body[data-theme]) */
+body[data-theme="light"]{
+  --bg:var(--cream);
+  --fg:var(--ink);
+  --fg-dim:rgba(33,10,9,.66);
+  --rule:rgba(33,10,9,.16);
+  --ember-text:#a8480a;   /* laranja queimado: 6:1 sobre o creme */
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+html:not(.no-smooth){scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:clamp(1rem,.95rem + .25vw,1.125rem);
+  line-height:1.6;
+  font-weight:300;
+  overflow-x:hidden;
+  transition:background-color .8s var(--ease),color .8s var(--ease);
+}
+body.is-locked{overflow:hidden}
+img,video,canvas,svg{display:block;max-width:100%}
+img,video{height:auto}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input{font:inherit}
+::selection{background:var(--ember);color:var(--ink)}
+
+/* ── 2. Tipografia e utilitários ───────────────────────────────────────── */
+h1,h2,h3,h4{margin:0;font-weight:400;line-height:.92;letter-spacing:-.02em}
+h1,h2,.h-lg,.h-xl,.frame__num,.hero__title{
+  font-family:"Anton","Arial Narrow",Impact,sans-serif;
+  text-transform:uppercase;
+  font-weight:400;
+}
+.h-lg{font-size:clamp(2.25rem,4.8vw,4.6rem)}
+.h-xl{font-size:clamp(3.2rem,11vw,10rem);line-height:.84;letter-spacing:-.03em}
+p{margin:0 0 1em}
+.wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad)}
+
+.eyebrow,.section-tag{
+  font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;
+  font-weight:500;color:var(--fg-dim);
+}
+.section-tag{display:flex;align-items:center;gap:.75rem;margin-bottom:2rem}
+.section-tag i{
+  font-style:normal;color:var(--ember-text);
+  border:1px solid currentColor;border-radius:999px;padding:.15rem .55rem;font-size:.66rem;
+}
+
+.btn{
+  --btn-bg:var(--ember);--btn-fg:var(--ink);
+  display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+  padding:1rem 2rem;border-radius:999px;
+  background:var(--btn-bg);color:var(--btn-fg);
+  font-size:.78rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  border:1px solid transparent;
+  transition:transform .4s var(--ease-out),background-color .35s,color .35s,border-color .35s;
+  will-change:transform;
+}
+.btn:hover{transform:translateY(-3px) scale(1.02);background:var(--ember-lit);color:var(--ink)}
+.btn--ghost{--btn-bg:transparent;--btn-fg:var(--fg);border-color:var(--rule)}
+.btn--ghost:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn--sm{padding:.7rem 1.3rem;font-size:.68rem}
+.btn--lg{padding:1.2rem 2.6rem;font-size:.82rem}
+
+.link{
+  display:inline-block;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:600;padding-bottom:.25rem;border-bottom:1px solid var(--ember);
+  transition:color .3s,border-color .3s;
+}
+.link:hover{color:var(--ember-text)}
+
+.sr-only,.skip{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+.skip:focus{
+  position:fixed;top:1rem;left:1rem;z-index:200;width:auto;height:auto;
+  clip:auto;margin:0;padding:.8rem 1.2rem;border-radius:999px;
+  background:var(--ember);color:var(--ink);
+}
+:focus-visible{outline:2px solid var(--ember);outline-offset:4px;border-radius:2px}
+
+/* revelações no scroll */
+.reveal{
+  opacity:0;transform:translateY(26px);
+  transition:opacity .9s var(--ease-out),transform .9s var(--ease-out);
+  transition-delay:var(--d,0ms);
+}
+.reveal.is-in{opacity:1;transform:none}
+
+/* texto que "acende" palavra a palavra conforme o scroll */
+[data-fill] .w{opacity:.18;transition:opacity .5s var(--ease),color .5s var(--ease)}
+[data-fill] .w.on{opacity:1}
+
+/* ── 3. Loader / cursor / grão ─────────────────────────────────────────── */
+.loader{
+  position:fixed;inset:0;z-index:300;
+  display:grid;place-items:center;
+  background:var(--ink);color:var(--cream);
+  transition:opacity .8s var(--ease),visibility .8s;
+}
+.loader.is-done{opacity:0;visibility:hidden}
+.loader__inner{display:flex;align-items:center;gap:1.4rem}
+.loader__logo{width:auto;height:clamp(7rem,22vw,13rem);object-fit:contain}
+.loader__count{font-size:.9rem;letter-spacing:.2em;color:var(--ember)}
+.loader__bar{
+  position:absolute;left:var(--pad);right:var(--pad);bottom:2.5rem;
+  height:1px;background:rgba(244,239,230,.16);
+}
+.loader__bar i{display:block;height:100%;width:0;background:var(--ember);transition:width .2s linear}
+
+.cursor{
+  position:fixed;top:0;left:0;z-index:250;pointer-events:none;
+  width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:999px;
+  background:var(--ember);mix-blend-mode:difference;
+  transition:width .35s var(--ease-out),height .35s var(--ease-out),margin .35s var(--ease-out),opacity .3s;
+  opacity:0;
+}
+.cursor.is-on{opacity:1}
+.cursor.is-big{width:88px;height:88px;margin:-44px 0 0 -44px;mix-blend-mode:normal}
+.cursor__label{
+  display:grid;place-items:center;height:100%;
+  font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600;
+  color:var(--ink);opacity:0;transition:opacity .25s;
+}
+.cursor.is-big .cursor__label{opacity:1}
+@media (hover:none),(pointer:coarse){.cursor{display:none}}
+
+.grain{
+  position:absolute;inset:-6%;pointer-events:none;z-index:2;
+  opacity:.09;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+/* Sem mix-blend-mode e sem animação de propósito. O grão tremia num elemento
+   de 4x a área da tela e composto em modo "overlay" — só isso custava ~24ms
+   por quadro nas seções do hero e dos especiais, quase metade do orçamento de
+   60fps. Estático e sem blend a textura continua lá e o custo some. */
+
+/* ── 4. Navegação e overlay ────────────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:120;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:1.1rem var(--pad);
+  color:var(--fg);
+  transition:transform .6s var(--ease),background-color .5s,backdrop-filter .5s,color .8s var(--ease);
+}
+.nav.is-solid{
+  background:color-mix(in srgb,var(--bg) 82%,transparent);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--rule);
+}
+.nav.is-hidden{transform:translateY(-115%)}
+.nav.is-open{color:var(--cream);background:transparent;backdrop-filter:none;border-color:transparent}
+
+.nav__brand{display:flex;align-items:center;gap:.6rem;font-family:"Anton",sans-serif;font-size:1.15rem;letter-spacing:.1em}
+.nav__logo{width:auto;height:42px;object-fit:contain}
+.nav__links{display:flex;gap:2rem}
+.nav__links a{
+  position:relative;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;
+}
+.nav__links a::after{
+  content:"";position:absolute;left:0;bottom:-.4rem;width:100%;height:1px;
+  background:currentColor;transform:scaleX(0);transform-origin:right;
+  transition:transform .45s var(--ease-out);
+}
+.nav__links a:hover::after,.nav__links a.is-active::after{transform:scaleX(1);transform-origin:left}
+.nav__links a.is-active{color:var(--ember-text)}
+.nav__right{display:flex;align-items:center;gap:1rem}
+
+.burger{display:none;width:34px;height:22px;position:relative}
+.burger span{
+  position:absolute;left:0;width:100%;height:2px;background:currentColor;border-radius:2px;
+  transition:transform .45s var(--ease-out),opacity .3s;
+}
+.burger span:nth-child(1){top:5px}
+.burger span:nth-child(2){bottom:5px}
+.nav.is-open .burger span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.nav.is-open .burger span:nth-child(2){transform:translateY(-6px) rotate(-45deg)}
+
+.overlay{
+  position:fixed;inset:0;z-index:110;
+  display:flex;flex-direction:column;justify-content:center;gap:2rem;
+  padding:6rem var(--pad) 3rem;
+  background:var(--ink);color:var(--cream);
+  clip-path:inset(0 0 100% 0);
+  transition:clip-path .8s var(--ease-out);
+}
+.overlay[hidden]{display:none}
+.overlay.is-open{clip-path:inset(0 0 0 0)}
+.overlay__nav{display:flex;flex-direction:column;gap:.2rem}
+.overlay__nav a{
+  display:flex;align-items:center;gap:1.2rem;
+  font-family:"Anton",sans-serif;text-transform:uppercase;
+  font-size:clamp(2.2rem,9vw,5rem);line-height:1.05;
+  opacity:0;transform:translateY(40px);
+  transition:opacity .6s var(--ease-out),transform .6s var(--ease-out),color .3s;
+  transition-delay:var(--d,0ms);
+}
+.overlay.is-open .overlay__nav a{opacity:1;transform:none}
+.overlay__nav a:hover{color:var(--ember-text)}
+.overlay__nav i{font-style:normal;font-family:"Inter",sans-serif;font-size:.7rem;letter-spacing:.2em;color:var(--ember)}
+.overlay__foot{
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;
+  padding-top:1.5rem;border-top:1px solid var(--line);
+  font-size:.76rem;letter-spacing:.1em;color:var(--cream-dim);
+}
+.overlay__foot p{margin:0}
+.overlay__foot a:hover{color:var(--ember)}
+
+/* ── 5. Hero ───────────────────────────────────────────────────────────── */
+.hero{
+  position:relative;min-height:100svh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:8rem var(--pad) 3.5rem;
+  overflow:hidden;isolation:isolate;
+}
+.hero__media{position:absolute;inset:0;z-index:-1;overflow:hidden}
+.hero__video,.hero__fallback{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+}
+.hero__video{z-index:1}
+.hero__fallback{z-index:0}
+.hero__video.is-missing{opacity:0}
+.hero__scrim{
+  position:absolute;inset:0;z-index:2;
+  background:
+    /* sombra do lanche, assada no degradê: o drop-shadow saía caro porque o
+       lanche tem parallax e o filtro era refeito a cada quadro */
+    radial-gradient(28% 16% at 74% 72%,rgba(0,0,0,.55) 0%,transparent 70%),
+    linear-gradient(to top,rgba(11,10,9,.94) 0%,rgba(11,10,9,.35) 45%,rgba(11,10,9,.55) 100%),
+    radial-gradient(120% 80% at 50% 40%,transparent 30%,rgba(11,10,9,.7) 100%);
+}
+.hero__burger{
+  position:absolute;z-index:2;right:-2%;bottom:12%;
+  width:min(46vw,40rem);pointer-events:none;
+  opacity:0;transform:translateY(40px) scale(.96);
+  transition:opacity 1.4s var(--ease-out) .5s,transform 1.6s var(--ease-out) .5s;
+}
+.is-ready .hero__burger{opacity:1;transform:none}
+.hero__content{position:relative;z-index:3;max-width:min(100%,60rem);color:var(--cream)}
+.hero__title{font-size:clamp(2.6rem,9vw,8.5rem);line-height:.88;margin:.6rem 0 1.6rem}
+.hero__title .line{display:block;overflow:hidden}
+.hero__title .line>span{
+  display:block;transform:translateY(110%);
+  transition:transform 1.1s var(--ease-out);
+  transition-delay:calc(var(--i,0) * 110ms);
+}
+.is-ready .hero__title .line>span{transform:none}
+.hero__sub{max-width:34rem;color:var(--cream-dim);font-size:1.05rem}
+.hero__cta{display:flex;flex-wrap:wrap;gap:.8rem}
+.hero__meta{
+  position:relative;z-index:3;display:flex;gap:.9rem;margin-top:3rem;
+  font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cream-dim);
+}
+.scroll-cue{
+  position:absolute;right:var(--pad);bottom:3.5rem;z-index:3;
+  display:flex;flex-direction:column;align-items:center;gap:.8rem;
+  font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--cream-dim);
+}
+.scroll-cue i{display:block;width:1px;height:64px;background:var(--line);position:relative;overflow:hidden}
+.scroll-cue i::after{
+  content:"";position:absolute;inset:0;background:var(--ember);
+  animation:cue 2.2s var(--ease) infinite;
+}
+@keyframes cue{0%{transform:translateY(-100%)}60%,100%{transform:translateY(100%)}}
+
+/* ── 6. Ticker ─────────────────────────────────────────────────────────── */
+.ticker{
+  background:var(--ember);color:var(--ink);overflow:hidden;
+  padding:.9rem 0;border-block:1px solid rgba(0,0,0,.15);
+}
+.ticker__track{
+  display:flex;align-items:center;gap:2.5rem;width:max-content;
+  font-family:"Anton",sans-serif;font-size:clamp(1.1rem,3vw,2rem);
+  letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;
+  animation:marquee 26s linear infinite;
+}
+.ticker__track i{font-style:normal;font-size:.8em;opacity:.7}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* ── 7. Manifesto ──────────────────────────────────────────────────────── */
+.manifesto{padding:clamp(6rem,14vw,12rem) 0}
+.manifesto__text{
+  font-size:clamp(1.6rem,4.2vw,3.4rem);
+  line-height:1.22;letter-spacing:-.02em;font-weight:400;
+  max-width:26ch;margin-bottom:clamp(3rem,8vw,6rem);
+}
+.manifesto__text .w.on{color:var(--fg)}
+.manifesto__grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;
+  border-top:1px solid var(--rule);padding-top:2.5rem;
+}
+.stat b{
+  display:block;font-family:"Anton",sans-serif;font-size:clamp(2.2rem,5vw,4rem);
+  line-height:1;color:var(--ember-text);
+}
+.stat span{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim)}
+
+/* ── 8. Especiais (palco de tela cheia) ────────────────────────────────── */
+/* O palco é sticky e o texto passa por cima dele: o .stage__flow é puxado
+   para cima com margin-top negativa, sobrepondo exatamente a altura do palco.
+   Cada painel tem uma tela de altura, então só um lanche fica visível por vez. */
+.stage-sec{position:relative}
+
+.stage{
+  position:sticky;top:0;z-index:0;
+  height:100svh;overflow:hidden;isolation:isolate;
+}
+.stage__glow{
+  position:absolute;inset:0;
+  background:
+    /* a sombra que aterra o lanche vem daqui, e não de um filter: assim ela é
+       pintada uma vez só, em vez de ser refeita a cada quadro do scroll */
+    radial-gradient(26% 13% at 66% 74%,rgba(0,0,0,.6) 0%,transparent 72%),
+    radial-gradient(42% 46% at 66% 46%,rgba(255,149,27,.30) 0%,transparent 70%),
+    radial-gradient(80% 70% at 66% 46%,rgba(255,80,10,.12) 0%,transparent 75%),
+    linear-gradient(165deg,#33100a 0%,#1a0706 65%,#120504 100%);
+}
+.stage__photos{
+  position:absolute;inset:0;
+  animation:flutua 9s ease-in-out infinite;   /* some com movimento reduzido */
+}
+@keyframes flutua{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-14px)}
+}
+.stage__photo{
+  position:absolute;top:50%;left:66%;
+  width:auto;height:auto;
+  max-width:min(46vw,38rem);max-height:min(62svh,38rem);
+  opacity:0;transform:translate(-50%,-46%) scale(.94);
+  /* visibility entra junto com um atraso do tamanho do fade: seis fotos
+     grandes em opacity:0 continuam sendo compostas a cada quadro, e só isso
+     custava ~6ms. Escondidas de verdade, o navegador pula as cinco que não
+     estão em cena — e a transição continua igual, porque a volta para hidden
+     só acontece depois que o fade termina. */
+  visibility:hidden;
+  transition:opacity .8s var(--ease),transform 1.5s var(--ease-out),
+             visibility 0s linear .8s;
+}
+.stage__photo.is-on{
+  opacity:1;transform:translate(-50%,-50%) scale(1);
+  visibility:visible;
+  transition:opacity .8s var(--ease),transform 1.5s var(--ease-out),visibility 0s;
+}
+
+/* escurece o lado do texto sem apagar o lanche */
+.stage__scrim{
+  position:absolute;inset:0;
+  background:linear-gradient(100deg,
+    rgba(18,5,4,.94) 0%,rgba(18,5,4,.82) 30%,rgba(18,5,4,.35) 52%,rgba(18,5,4,0) 70%);
+}
+/* nome do lanche em tipo enorme, atrás de tudo */
+.stage__name{
+  position:absolute;right:2vw;bottom:2vh;margin:0;max-width:60vw;
+  font-family:"Anton",sans-serif;text-transform:uppercase;text-align:right;
+  font-size:clamp(2rem,7vw,6.5rem);line-height:.9;letter-spacing:-.02em;
+  color:var(--cream);opacity:.09;pointer-events:none;
+}
+
+.stage__dots{
+  position:absolute;right:calc(var(--pad) * .5);top:50%;z-index:3;
+  transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:.7rem;
+}
+.stage__dots i{
+  display:block;width:7px;height:7px;border-radius:999px;
+  background:rgba(244,233,223,.26);
+  transition:background-color .5s var(--ease),transform .5s var(--ease-out);
+}
+.stage__dots i.is-on{background:var(--ember);transform:scale(1.6)}
+
+.stage__flow{position:relative;z-index:2;margin-top:-100svh}
+.stage__head{
+  min-height:72svh;display:flex;flex-direction:column;justify-content:center;
+  padding:8rem var(--pad) 0;
+}
+.stage__hint{
+  margin:2rem 0 0;font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--fg-dim);
+}
+
+.panel{
+  min-height:100svh;display:flex;align-items:center;
+  padding:4rem var(--pad);
+}
+.panel__inner{max-width:34rem;color:var(--cream)}
+.panel__index{
+  margin:0 0 1rem;font-size:.68rem;letter-spacing:.28em;
+  color:var(--ember-text);
+}
+.panel__top{display:flex;align-items:baseline;gap:1.2rem;flex-wrap:wrap}
+.panel h3{
+  font-family:"Anton",sans-serif;text-transform:uppercase;
+  font-size:clamp(2rem,5.2vw,4rem);line-height:.95;
+}
+.panel__price{
+  flex:none;font-size:.8rem;font-weight:600;letter-spacing:.04em;
+  padding:.35rem .85rem;border-radius:999px;
+  background:var(--ember);color:var(--ink);
+}
+.panel__desc{
+  margin:1.2rem 0 1.4rem;font-size:1.02rem;line-height:1.55;
+  color:var(--cream-dim);
+}
+
+/* ingredientes, no mesmo formato de lista do cardápio impresso */
+.ings{
+  display:flex;flex-wrap:wrap;gap:.25rem 1.1rem;
+  margin:0;padding:0;list-style:none;
+  font-size:.84rem;color:var(--fg-dim);
+}
+.panel .ings{color:var(--cream-dim)}
+.ings li{position:relative;padding-left:.75rem}
+.ings li::before{
+  content:"";position:absolute;left:0;top:.62em;
+  width:3px;height:3px;border-radius:50%;background:var(--ember-text);
+}
+
+/* ── 9. Break em parallax ──────────────────────────────────────────────── */
+.break{
+  position:relative;min-height:90svh;display:grid;place-items:center;
+  overflow:hidden;padding:6rem var(--pad);isolation:isolate;
+}
+.break__media{position:absolute;inset:-12% 0;z-index:-1}
+.break__media img{width:100%;height:100%;object-fit:cover;will-change:transform}
+.break__media::after{content:"";position:absolute;inset:0;background:rgba(33,10,9,.72)}
+/* recorte de chama tirado do próprio cardápio */
+.break__fire{
+  position:absolute;left:-2%;right:-2%;bottom:-1px;z-index:0;
+  width:104%;max-width:none;pointer-events:none;
+  opacity:.85;mix-blend-mode:screen;
+}
+.break__quote{position:relative;z-index:1;margin:0;max-width:min(92vw,58rem);text-align:center;color:var(--cream)}
+.break__quote p{
+  font-family:"Anton",sans-serif;text-transform:uppercase;
+  font-size:clamp(1.5rem,3.6vw,3.2rem);line-height:1.06;letter-spacing:-.01em;
+  max-width:15em;margin-inline:auto;   /* em, não ch: a Anton é muito estreita */
+}
+.break__quote cite{
+  font-style:normal;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cream-dim);
+}
+
+/* ── 12. Processo (tira horizontal de tela cheia) ──────────────────────── */
+/* Cada passo ocupa uma tela inteira, com a foto de fundo. O bloco fica
+   sticky e a tira desliza no eixo X conforme a página desce — a altura da
+   seção é calculada no JS a partir da largura total da tira. */
+.process{position:relative;background:var(--ink);color:var(--cream)}
+.process__sticky{position:sticky;top:0;height:100svh;overflow:hidden}
+
+.process__track{display:flex;height:100%;width:max-content;will-change:transform}
+
+.frame{
+  position:relative;flex:0 0 100vw;height:100%;
+  display:flex;align-items:flex-end;
+  overflow:hidden;isolation:isolate;
+  /* painel fora da tela não é desenhado; só dois ficam visíveis por vez */
+  content-visibility:auto;
+  contain-intrinsic-size:100vw 100svh;
+}
+.frame__media{position:absolute;inset:0;overflow:hidden}
+.frame__media img{width:100%;height:100%;max-width:none;object-fit:cover}
+/* O escurecido cobre só a metade de baixo, onde mora o texto. Cobrindo o
+   painel inteiro era um segundo retângulo de tela cheia por cima de outro, e
+   esse empilhamento é o que mais pesa aqui. */
+.frame__scrim{
+  position:absolute;left:0;right:0;bottom:0;top:38%;
+  background:linear-gradient(to top,
+    rgba(18,5,4,.95) 0%,rgba(18,5,4,.72) 45%,rgba(18,5,4,0) 100%);
+}
+/* faixa curta no topo, só para o cabeçalho da seção continuar legível */
+.frame__media::after{
+  content:"";position:absolute;left:0;right:0;top:0;height:26%;
+  background:linear-gradient(to bottom,rgba(18,5,4,.72) 0%,rgba(18,5,4,0) 100%);
+}
+.frame__text{
+  position:relative;z-index:1;
+  max-width:min(42rem,72vw);
+  padding:0 var(--pad) clamp(4rem,10vh,7rem);
+  transition:opacity .5s var(--ease),transform .7s var(--ease-out);
+}
+/* O texto só some depois que o JS assume a tira. Se o script não rodar — ou
+   se o visitante pediu menos movimento, e aí a tira nem existe — os quatro
+   passos aparecem empilhados e legíveis, que é o estado correto sem JS. */
+.process.tira-ativa .frame__text{opacity:0;transform:translateX(40px)}
+.process.tira-ativa .frame.is-on .frame__text{opacity:1;transform:none}
+.frame__num{
+  display:block;margin-bottom:1rem;
+  font-family:"Anton",sans-serif;font-size:.85rem;letter-spacing:.24em;
+  color:var(--ember);
+}
+.frame h3{
+  font-family:"Anton",sans-serif;text-transform:uppercase;
+  font-size:clamp(2.2rem,6vw,5rem);line-height:.95;margin-bottom:1rem;
+}
+.frame p{margin:0;color:var(--cream-dim);font-size:1.02rem;line-height:1.55;max-width:44ch}
+
+/* o passo final não tem foto: fica só o brilho de brasa */
+.frame--fim{align-items:center}
+.frame--fim::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(46% 50% at 62% 50%,rgba(255,149,27,.24) 0%,transparent 70%),
+    linear-gradient(165deg,#33100a 0%,#160604 70%);
+}
+.frame--fim .frame__text{padding-bottom:0}
+.frame--fim .btn{margin-top:2rem}
+
+/* cabeçalho e barra de progresso por cima da tira */
+.process__head{
+  position:absolute;top:0;left:0;right:0;z-index:2;
+  display:flex;align-items:center;gap:2rem;
+  padding:6.5rem var(--pad) 0;
+  pointer-events:none;
+}
+.process__head .section-tag{margin:0}
+.process__bar{flex:1;height:1px;background:rgba(244,233,223,.18);position:relative}
+.process__bar i{position:absolute;inset:0;width:0;background:var(--ember)}
+
+/* ── 13. A casa ────────────────────────────────────────────────────────── */
+.about{padding:clamp(6rem,14vw,11rem) 0}
+.about__grid{
+  display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);
+  gap:clamp(2rem,6vw,6rem);align-items:center;
+}
+.about__media{position:relative;overflow:hidden;aspect-ratio:5/6;background:var(--ink-soft)}
+.about__media img{width:100%;height:112%;object-fit:cover;will-change:transform}
+.about__text p{color:var(--fg-dim);max-width:48ch}
+.about__text .h-lg{margin-bottom:1.5rem}
+.about__facts{list-style:none;margin:2.5rem 0 0;padding:0;display:grid;gap:0}
+.about__facts li{
+  display:flex;justify-content:space-between;gap:1rem;align-items:baseline;
+  padding:1rem 0;border-top:1px solid var(--rule);
+}
+.about__facts li:last-child{border-bottom:1px solid var(--rule)}
+.about__facts b{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600}
+.about__facts span{color:var(--fg-dim);font-size:.9rem;text-align:right}
+
+/* ── 10. Cartões de cardápio (tradicionais e combos) ───────────────────── */
+.cards-sec{padding:clamp(5rem,11vw,9rem) 0}
+.cards-sec .h-lg{margin-bottom:clamp(2.5rem,6vw,4.5rem)}
+.cards{
+  display:grid;gap:0;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,20rem),1fr));
+  border-top:1px solid var(--rule);border-left:1px solid var(--rule);
+}
+.card{
+  display:flex;flex-direction:column;gap:.9rem;
+  padding:1.75rem;
+  border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  transition:background-color .45s var(--ease);
+}
+.card:hover{background:color-mix(in srgb,var(--ember) 8%,var(--bg))}
+.card__top{display:flex;align-items:baseline;justify-content:space-between;gap:1rem}
+.card h3{
+  font-family:"Anton",sans-serif;text-transform:uppercase;
+  font-size:clamp(1.2rem,2.2vw,1.6rem);
+}
+.price{
+  flex:none;font-size:.78rem;font-weight:600;letter-spacing:.04em;
+  padding:.32rem .8rem;border-radius:999px;
+  background:var(--ember);color:var(--ink);
+}
+.card__desc{margin:0;font-size:.9rem;color:var(--fg-dim);max-width:46ch}
+/* o Meio Quilo e o Combo Galera ocupam a linha toda quando sobra espaço */
+.card--wide,.card--hero{grid-column:1/-1}
+.card--wide h3,.card--hero h3{font-size:clamp(1.5rem,3vw,2.2rem)}
+.cards--tight .card{padding:1.5rem}
+
+.sides{margin-top:clamp(2.5rem,6vw,4rem)}
+.sides h3{
+  font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ember-text);margin-bottom:.5rem;
+}
+
+/* ── 11. Bebidas e listas de preço ─────────────────────────────────────── */
+.pricelist{list-style:none;margin:0;padding:0}
+.pricelist li{
+  display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+  padding:.9rem 0;border-bottom:1px solid var(--rule);
+}
+.pricelist li:first-child{border-top:1px solid var(--rule)}
+.pricelist span{font-size:.95rem}
+.pricelist i{font-style:normal;color:var(--fg-dim);font-size:.82rem;margin-left:.4rem}
+.pricelist b{font-weight:600;font-size:.9rem;white-space:nowrap;color:var(--ember-text)}
+
+.drinks-sec{padding:clamp(5rem,11vw,9rem) 0}
+.drinks-sec .h-lg{margin-bottom:clamp(2.5rem,6vw,4.5rem)}
+.drinks{display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(2rem,6vw,5rem);align-items:start}
+
+/* ── 14. Pedido ────────────────────────────────────────────────────────── */
+.order{
+  position:relative;overflow:hidden;isolation:isolate;
+  padding:clamp(6rem,15vw,12rem) 0;color:var(--cream);
+}
+.order__media{position:absolute;inset:0;z-index:-1;background:var(--ink)}
+.order__video{width:100%;height:100%;object-fit:cover}
+.order__media>img{width:100%;height:100%;object-fit:cover}
+.order__scrim{
+  position:absolute;inset:0;
+  background:linear-gradient(105deg,rgba(11,10,9,.96) 8%,rgba(11,10,9,.86) 45%,rgba(11,10,9,.62) 100%);
+}
+.order__content{position:relative}
+.order__sub{max-width:34rem;color:var(--cream-dim);margin-top:1.5rem}
+.order__actions{display:flex;flex-wrap:wrap;gap:.8rem;margin:2rem 0 3.5rem}
+.order__where{
+  display:flex;flex-wrap:wrap;gap:2.5rem;margin-bottom:3rem;
+}
+.order__where h3{
+  font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ember-text);margin-bottom:.5rem;
+}
+.order__where p{margin:0;color:var(--cream-dim);font-size:.92rem;line-height:1.5}
+.order__form{max-width:32rem;border-top:1px solid var(--line);padding-top:2rem}
+.order__form-title{font-size:.8rem;letter-spacing:.08em;color:var(--cream-dim)}
+.field{display:flex;gap:.6rem;flex-wrap:wrap}
+.field input{
+  flex:1 1 14rem;min-width:0;padding:1rem 1.2rem;border-radius:999px;
+  background:rgba(244,239,230,.07);border:1px solid var(--line);color:var(--cream);
+  transition:border-color .3s,background-color .3s;
+}
+.field input::placeholder{color:rgba(244,239,230,.4)}
+.field input:focus{outline:none;border-color:var(--ember);background:rgba(244,239,230,.1)}
+.order__msg{margin:.9rem 0 0;font-size:.8rem;min-height:1.2em;color:var(--mustard)}
+
+/* ── 15. Rodapé ────────────────────────────────────────────────────────── */
+.foot{padding:clamp(4rem,8vw,6rem) 0 2.5rem;border-top:1px solid var(--rule)}
+.foot__top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2rem;align-items:flex-start}
+.foot__logo{width:auto;height:clamp(6rem,14vw,9rem);object-fit:contain}
+.foot__nav,.foot__social{display:flex;flex-direction:column;gap:.6rem}
+.foot__nav a,.foot__social a{
+  font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);
+  transition:color .3s;
+}
+.foot__nav a:hover,.foot__social a:hover{color:var(--ember-text)}
+.foot__bottom{
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem;
+  margin-top:clamp(3rem,7vw,5rem);padding-top:1.5rem;border-top:1px solid var(--rule);
+  font-size:.72rem;letter-spacing:.08em;color:var(--fg-dim);
+}
+.foot__bottom p{margin:0}
+
+/* ── 16. Responsivo ────────────────────────────────────────────────────── */
+@media (max-width:1024px){
+  .stage__photo{left:60%;max-width:56vw}
+  .stage__name{font-size:clamp(1.6rem,6vw,4rem)}
+  .about__grid{grid-template-columns:1fr}
+  .about__media{aspect-ratio:16/10;order:2}
+  .manifesto__grid{grid-template-columns:1fr 1fr;gap:2rem 1rem}
+  .hero__burger{width:min(52vw,30rem);bottom:auto;top:14%;opacity:.5}
+  .is-ready .hero__burger{opacity:.5}
+}
+@media (max-width:760px){
+  .nav__links,.nav__right .btn{display:none}
+  .burger{display:block}
+  .drinks{grid-template-columns:1fr}
+  .drinks .pricelist+.pricelist li:first-child{border-top:0}
+  .hero__burger{display:none}
+  .scroll-cue{display:none}
+  /* sem espaço para lado a lado: lanche em cima, texto embaixo */
+  .stage__photo{left:50%;top:34%;max-width:82vw;max-height:38svh}
+  .stage__photo.is-on{transform:translate(-50%,-50%) scale(1)}
+  .stage__scrim{
+    background:linear-gradient(180deg,
+      rgba(18,5,4,.5) 0%,rgba(18,5,4,.2) 26%,rgba(18,5,4,.86) 52%,rgba(18,5,4,.97) 72%);
+  }
+  .stage__name{display:none}
+  .panel{align-items:flex-end;padding-bottom:6svh}
+  .panel__desc{font-size:.95rem}
+  .hero{padding-bottom:2.5rem}
+  .hero__meta{margin-top:2rem;flex-wrap:wrap}
+  .about__facts span{text-align:left}
+  .about__facts li{flex-direction:column;gap:.2rem}
+  .frame__text{max-width:none}
+  .frame p{font-size:.95rem}
+  .process__head{padding-top:5.5rem}
+  .foot__top{flex-direction:column}
+}
+
+/* No toque o salto entre lanches é feito pelo scroll-snap do navegador, que
+   respeita o impulso do dedo; o JS só assume no mouse e no teclado. A âncora
+   é "proximity" e só os painéis têm ponto de parada, então o resto da página
+   continua rolando livre. */
+@media (pointer:coarse){
+  html{scroll-snap-type:y proximity}
+  .panel{scroll-snap-align:start}
+}
+
+/* ── 17. Movimento reduzido ────────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+  }
+  .reveal{opacity:1;transform:none}
+  .hero__title .line>span{transform:none}
+  [data-fill] .w{opacity:1}
+  .stage__photo{transition:none}
+  html{scroll-snap-type:none}
+  .panel{scroll-snap-align:none}
+  .grain{display:none}
+  /* sem tira deslizante: os passos viram uma pilha comum */
+  .process{height:auto!important}
+  .process__sticky{position:static;height:auto;overflow:visible}
+  .process__track{flex-direction:column;width:auto;transform:none!important}
+  .frame{flex:0 0 auto;height:auto;min-height:70svh}
+  .frame__media img{transform:none!important}
+  .process__head{position:static;padding:5rem var(--pad) 2rem}
+}
