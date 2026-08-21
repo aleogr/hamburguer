@@ -15,21 +15,13 @@ OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
 # "legenda no canto" = imagem usada como fundo atras de texto: a legenda vai
 # discreta no rodape em vez de no meio, para nao competir com o titulo.
 PLACEHOLDERS = [
-    ("hero-poster",      "HERO / POSTER DO VIDEO", (1920, 1080), (14, 62, 12), 1, True),
-    ("menu-classico",    "CLASSICO BRASA",         (1200, 1500), (18, 70, 16), 2, False),
-    ("menu-fume",        "FUME",                   (1200, 1500), (26, 58, 14), 3, False),
-    ("menu-diablo",      "PICANTE DIABLO",         (1200, 1500), (4,  72, 15), 4, False),
-    ("menu-trufa",       "TRUFA NEGRA",            (1200, 1500), (32, 30, 12), 5, False),
-    ("menu-verde",       "VERDE / VEGETARIANO",    (1200, 1500), (74, 42, 13), 6, False),
-    ("menu-bacon",       "BACON MELT",             (1200, 1500), (12, 66, 15), 7, False),
-    ("processo-01",      "A CARNE",                (1400, 1000), (10, 55, 13), 8, False),
-    ("processo-02",      "O FOGO",                 (1400, 1000), (22, 74, 14), 9, False),
-    ("processo-03",      "A MONTAGEM",             (1400, 1000), (36, 44, 13), 10, False),
-    ("break-fogo",       "BREAK / CHAPA NO FOGO",  (1920, 1200), (16, 78, 11), 11, True),
-    ("casa-vila",        "VILA MADALENA",          (1200, 900),  (20, 40, 13), 12, False),
-    ("casa-pinheiros",   "PINHEIROS",              (1200, 900),  (28, 36, 12), 13, False),
-    ("casa-botafogo",    "BOTAFOGO",               (1200, 900),  (8,  44, 12), 14, False),
-    ("sobre-equipe",     "A EQUIPE",               (1200, 1400), (30, 34, 12), 15, False),
+    ("hero-poster",      "HERO / POSTER DO VIDEO", (1920, 1080), (14, 62, 10), 1, True),
+    ("processo-01",      "A CARNE",                (1400, 1000), (10, 55, 11), 8, False),
+    ("processo-02",      "A BRASA",                (1400, 1000), (22, 74, 12), 9, False),
+    ("processo-03",      "A MONTAGEM",             (1400, 1000), (33, 60, 11), 10, False),
+    ("casa-salao",       "O SALAO",                (1200, 900),  (20, 40, 11), 12, False),
+    ("casa-balcao",      "O BALCAO",               (1200, 900),  (28, 36, 10), 13, False),
+    ("sobre-equipe",     "A EQUIPE",               (1200, 1400), (30, 34, 10), 15, False),
 ]
 
 
@@ -108,7 +100,7 @@ def build(name, label, size, base, seed, corner_label=False):
   <rect width="{w}" height="{h}" fill="url(#glow)"/>
   {arcs}
   {grain}
-  <g fill="none" stroke="{hsl(bh + 10, 80, 62)}" stroke-width="2" opacity="0.5">
+  <g fill="none" stroke="#FF951B" stroke-width="2" opacity="0.5">
     <path d="M{corner} {corner * 2} V{corner} H{corner * 2}"/>
     <path d="M{w - corner * 2} {corner} H{w - corner} V{corner * 2}"/>
     <path d="M{corner} {h - corner * 2} V{h - corner} H{corner * 2}"/>

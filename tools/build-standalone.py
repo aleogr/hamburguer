@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Gera dist/brasa-standalone.html: a página inteira num arquivo só, com CSS, JS,
+Gera dist/mana-standalone.html: a página inteira num arquivo só, com CSS, JS,
 fontes e imagens embutidos. Serve para mandar por e-mail/WhatsApp ou abrir com
 dois cliques, sem precisar de servidor.
 
@@ -16,7 +16,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(ROOT, "dist")
-OUT = os.path.join(OUT_DIR, "brasa-standalone.html")
+OUT = os.path.join(OUT_DIR, "mana-standalone.html")
 
 MIME = {".woff2": "font/woff2", ".svg": "image/svg+xml", ".png": "image/png",
         ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp"}

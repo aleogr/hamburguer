@@ -1,5 +1,5 @@
 /* ==========================================================================
-   BRASA — interações da página
+   Hamburgueria Maná — interações da página
    Vanilla JS, sem dependências. Tudo respeita prefers-reduced-motion.
 
    Índice:
