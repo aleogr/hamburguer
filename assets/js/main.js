@@ -184,14 +184,16 @@
     if (!els.length) return;
     if (reduced) { els.forEach(function (e) { e.classList.add("is-in"); }); return; }
 
-    // escalona irmãos para o conteúdo entrar em cascata
-    var groups = {};
+    // escalona irmãos para o conteúdo entrar em cascata.
+    // Map, não objeto: um nó do DOM como chave de objeto vira sempre a mesma
+    // string, e aí a página inteira caía num grupo só (todo mundo com o
+    // atraso máximo, o que fazia as últimas seções demorarem a aparecer).
+    var groups = new Map();
     els.forEach(function (el) {
-      var key = el.parentNode;
-      groups[key] = groups[key] || [];
-      var i = groups[key].length;
-      groups[key].push(el);
-      el.style.setProperty("--d", Math.min(i, 6) * 90 + "ms");
+      var siblings = groups.get(el.parentNode) || [];
+      el.style.setProperty("--d", Math.min(siblings.length, 5) * 80 + "ms");
+      siblings.push(el);
+      groups.set(el.parentNode, siblings);
     });
 
     var io = new IntersectionObserver(function (entries) {
