@@ -77,7 +77,7 @@ input{font:inherit}
 
 /* ── 2. Tipografia e utilitários ───────────────────────────────────────── */
 h1,h2,h3,h4{margin:0;font-weight:400;line-height:.92;letter-spacing:-.02em}
-h1,h2,.h-lg,.h-xl,.step__num,.hero__title{
+h1,h2,.h-lg,.h-xl,.frame__num,.hero__title{
   font-family:"Anton","Arial Narrow",Impact,sans-serif;
   text-transform:uppercase;
   font-weight:400;
@@ -481,38 +481,68 @@ p{margin:0 0 1em}
   font-style:normal;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cream-dim);
 }
 
-/* ── 12. Processo (scroll horizontal) ──────────────────────────────────── */
-.process{position:relative;background:var(--cream);color:var(--ink)}
-.process__sticky{
-  position:sticky;top:0;height:100svh;
-  display:flex;flex-direction:column;justify-content:center;gap:2rem;
-  overflow:hidden;padding-block:6.5rem 3rem;
+/* ── 12. Processo (tira horizontal de tela cheia) ──────────────────────── */
+/* Cada passo ocupa uma tela inteira, com a foto de fundo. O bloco fica
+   sticky e a tira desliza no eixo X conforme a página desce — a altura da
+   seção é calculada no JS a partir da largura total da tira. */
+.process{position:relative;background:var(--ink);color:var(--cream)}
+.process__sticky{position:sticky;top:0;height:100svh;overflow:hidden}
+
+.process__track{display:flex;height:100%;width:max-content;will-change:transform}
+
+.frame{
+  position:relative;flex:0 0 100vw;height:100%;
+  display:flex;align-items:flex-end;
+  overflow:hidden;isolation:isolate;
 }
-.process__head{
-  display:flex;align-items:center;gap:2rem;padding-inline:var(--pad);
-}
-.process__head .section-tag{margin:0}
-.process__bar{flex:1;height:1px;background:rgba(11,10,9,.15);position:relative}
-.process__bar i{position:absolute;inset:0;width:0;background:var(--ember);transform-origin:left}
-.process__track{
-  display:flex;gap:clamp(1.5rem,4vw,4rem);padding-inline:var(--pad);
+.frame__media{position:absolute;inset:0;overflow:hidden}
+/* a foto é mais larga que o painel para poder se mexer por dentro dele */
+.frame__media img{
+  width:112%;height:100%;max-width:none;object-fit:cover;
   will-change:transform;
 }
-.step{
-  flex:0 0 min(78vw,26rem);
-  display:flex;flex-direction:column;gap:1rem;
+.frame__scrim{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,
+    rgba(18,5,4,.95) 0%,rgba(18,5,4,.7) 34%,rgba(18,5,4,.25) 62%,rgba(18,5,4,.45) 100%);
 }
-.step__num{
-  font-family:"Anton",sans-serif;font-size:.85rem;letter-spacing:.2em;color:var(--ember-text);
+.frame__text{
+  position:relative;z-index:1;
+  max-width:min(42rem,72vw);
+  padding:0 var(--pad) clamp(4rem,10vh,7rem);
 }
-.step__img{overflow:hidden;aspect-ratio:7/5;background:var(--ink-soft)}
-.step__img img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease-out)}
-.step:hover .step__img img{transform:scale(1.06)}
-.step h3{font-family:"Anton",sans-serif;text-transform:uppercase;font-size:clamp(1.6rem,3.4vw,2.4rem)}
-.step p{color:rgba(11,10,9,.66);font-size:.95rem;margin:0}
-.step--end{justify-content:center;gap:1.4rem}
-.step--end h3{font-size:clamp(2rem,5vw,3.4rem);max-width:12ch}
-.step--end .btn{align-self:flex-start}
+.frame__num{
+  display:block;margin-bottom:1rem;
+  font-family:"Anton",sans-serif;font-size:.85rem;letter-spacing:.24em;
+  color:var(--ember);
+}
+.frame h3{
+  font-family:"Anton",sans-serif;text-transform:uppercase;
+  font-size:clamp(2.2rem,6vw,5rem);line-height:.95;margin-bottom:1rem;
+}
+.frame p{margin:0;color:var(--cream-dim);font-size:1.02rem;line-height:1.55;max-width:44ch}
+
+/* o passo final não tem foto: fica só o brilho de brasa */
+.frame--fim{align-items:center}
+.frame--fim::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(46% 50% at 62% 50%,rgba(255,149,27,.24) 0%,transparent 70%),
+    linear-gradient(165deg,#33100a 0%,#160604 70%);
+}
+.frame--fim .frame__text{padding-bottom:0}
+.frame--fim .btn{margin-top:2rem}
+
+/* cabeçalho e barra de progresso por cima da tira */
+.process__head{
+  position:absolute;top:0;left:0;right:0;z-index:2;
+  display:flex;align-items:center;gap:2rem;
+  padding:6.5rem var(--pad) 0;
+  pointer-events:none;
+}
+.process__head .section-tag{margin:0}
+.process__bar{flex:1;height:1px;background:rgba(244,233,223,.18);position:relative}
+.process__bar i{position:absolute;inset:0;width:0;background:var(--ember)}
 
 /* ── 13. A casa ────────────────────────────────────────────────────────── */
 .about{padding:clamp(6rem,14vw,11rem) 0}
@@ -668,7 +698,9 @@ p{margin:0 0 1em}
   .hero__meta{margin-top:2rem;flex-wrap:wrap}
   .about__facts span{text-align:left}
   .about__facts li{flex-direction:column;gap:.2rem}
-  .step{flex-basis:82vw}
+  .frame__text{max-width:none}
+  .frame p{font-size:.95rem}
+  .process__head{padding-top:5.5rem}
   .foot__top{flex-direction:column}
 }
 
@@ -695,7 +727,11 @@ p{margin:0 0 1em}
   html{scroll-snap-type:none}
   .panel{scroll-snap-align:none}
   .grain{display:none}
-  .process__sticky{position:static;height:auto}
-  .process__track{flex-wrap:wrap;transform:none!important}
-  .step{flex-basis:100%}
+  /* sem tira deslizante: os passos viram uma pilha comum */
+  .process{height:auto!important}
+  .process__sticky{position:static;height:auto;overflow:visible}
+  .process__track{flex-direction:column;width:auto;transform:none!important}
+  .frame{flex:0 0 auto;height:auto;min-height:70svh}
+  .frame__media img{transform:none!important}
+  .process__head{position:static;padding:5rem var(--pad) 2rem}
 }

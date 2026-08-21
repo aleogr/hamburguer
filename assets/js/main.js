@@ -416,30 +416,41 @@
     });
   })();
 
-  /* ── 13. Processo: scroll horizontal travado ──────────────────────────── */
+  /* ── 13. Processo: tira horizontal travada ────────────────────────────── */
   (function processScroll() {
     var sec = $("#processo"), track = $("#processTrack"), bar = $("#processBar");
     if (!sec || !track) return;
     if (reduced) { sec.style.height = "auto"; return; }
 
+    // Quanto de rolagem vertical custa a tira inteira. Em 1:1 quatro painéis
+    // de tela cheia exigiriam quase cinco telas de scroll; em 0.6 a tira anda
+    // um pouco mais rápido do que o dedo, sem ficar brusca.
+    var RITMO = 0.6;
+    // Folga da foto dentro do painel (ela é 112% da largura). É o que dá a
+    // sensação de profundidade: o fundo anda mais devagar que o painel.
+    var FOLGA = 5;   // % da largura da própria foto
+
     var distance = 0;
+    // guarda as referências uma vez: o laço roda a cada frame de scroll
+    var quadros = $$(".frame", track).map(function (q) {
+      return { el: q, texto: $(".frame__text", q), foto: $(".frame__media img", q) };
+    });
 
     var measure = function () {
-      // mede pelo último cartão em vez de scrollWidth: alguns navegadores
-      // ignoram o padding-right do container ao calcular scrollWidth, e o
-      // último cartão acabava colado na borda da tela.
+      // mede pelo último painel em vez de scrollWidth: alguns navegadores
+      // ignoram o padding-right do container ao calcular scrollWidth.
       var last = track.lastElementChild;
       var padRight = parseFloat(window.getComputedStyle(track).paddingRight) || 0;
       var contentRight = last ? last.offsetLeft + last.offsetWidth + padRight : 0;
       distance = Math.max(0, contentRight - window.innerWidth);
-      // a seção fica alta o bastante para "segurar" o scroll horizontal
-      sec.style.height = (window.innerHeight + distance) + "px";
+      // a seção fica alta o bastante para "segurar" a tira
+      sec.style.height = (window.innerHeight + distance * RITMO) + "px";
     };
 
     measure();
     window.addEventListener("resize", measure);
     window.addEventListener("load", measure);
-    // a largura dos cartões muda quando as fontes entram
+    // as medidas mudam quando as fontes entram
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
 
     onScroll(function () {
@@ -449,6 +460,28 @@
       var p = clamp(-r.top / total, 0, 1);
       track.style.transform = "translate3d(" + (-p * distance).toFixed(2) + "px,0,0)";
       if (bar) bar.style.width = (p * 100).toFixed(1) + "%";
+
+      // nada a fazer se a seção nem está na tela
+      if (r.bottom < 0 || r.top > window.innerHeight) return;
+
+      var vw = window.innerWidth;
+      quadros.forEach(function (q) {
+        var qr = q.el.getBoundingClientRect();
+        // -1 quando o painel está uma tela à esquerda, +1 uma tela à direita
+        var t = clamp((qr.left + qr.width / 2 - vw / 2) / vw, -1, 1);
+
+        // O texto só existe enquanto o painel dele está enquadrado. Sem isso,
+        // no meio da passagem apareciam dois textos cortados ao mesmo tempo —
+        // no celular, onde o painel é estreito, ficava ilegível.
+        if (q.texto) {
+          q.texto.style.opacity = clamp(1 - Math.abs(t) * 1.8, 0, 1).toFixed(3);
+          q.texto.style.transform = "translate3d(" + (t * 40).toFixed(1) + "px,0,0)";
+        }
+        // a foto anda menos que o painel: é o que dá a profundidade
+        if (q.foto) {
+          q.foto.style.transform = "translate3d(" + (-t * FOLGA).toFixed(2) + "%,0,0)";
+        }
+      });
     });
   })();
 

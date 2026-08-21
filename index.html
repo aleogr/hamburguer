@@ -374,41 +374,60 @@
   </div>
 </section>
 
-<!-- ══ 08 · PROCESSO (scroll horizontal travado) ═════════════ -->
-<!-- TODO: texto escrito a partir do que o cardápio diz. Ajuste para bater
+<!-- ══ 08 · PROCESSO ═════════════════════════════════════════
+     Tira horizontal: cada passo é um painel de tela inteira, com a foto
+     de fundo, e a tira desliza para o lado conforme a página desce.
+     TODO: texto escrito a partir do que o cardápio diz. Ajuste para bater
      com o processo real da cozinha antes de publicar. -->
-<section class="process" id="processo" data-theme="light">
+<section class="process" id="processo" data-theme="dark">
   <div class="process__sticky">
+
+    <div class="process__track" id="processTrack">
+      <article class="frame">
+        <div class="frame__media"><img src="assets/img/processo-01.svg" alt="Hambúrguer artesanal sendo preparado"></div>
+        <div class="frame__scrim"></div>
+        <div class="frame__text">
+          <span class="frame__num">01</span>
+          <h3>A carne</h3>
+          <p>Hambúrguer artesanal de 180 g, moldado na casa. É a mesma carne do Clássico e do Big Burguer — no segundo, dobrada.</p>
+        </div>
+      </article>
+
+      <article class="frame">
+        <div class="frame__media"><img src="assets/img/processo-02.svg" alt="Hambúrguer na brasa"></div>
+        <div class="frame__scrim"></div>
+        <div class="frame__text">
+          <span class="frame__num">02</span>
+          <h3>A brasa</h3>
+          <p>Tudo que é tradicional vai para a brasa. É de onde vem o gosto de defumado que chapa nenhuma consegue imitar.</p>
+        </div>
+      </article>
+
+      <article class="frame">
+        <div class="frame__media"><img src="assets/img/processo-03.svg" alt="Montagem do lanche"></div>
+        <div class="frame__scrim"></div>
+        <div class="frame__text">
+          <span class="frame__num">03</span>
+          <h3>A montagem</h3>
+          <p>Pão de brioche selado, queijo sobre a carne ainda quente e maionese artesanal em cima e embaixo. Sai fechado, sai na hora.</p>
+        </div>
+      </article>
+
+      <article class="frame frame--fim">
+        <div class="frame__text">
+          <span class="frame__num">04</span>
+          <h3>E aí é com você.</h3>
+          <p>Come com a mão. Não corta ao meio. Se for o Meio Quilo, chama reforço.</p>
+          <a href="#pedido" class="btn" data-nav>Peça agora</a>
+        </div>
+      </article>
+    </div>
+
     <div class="process__head">
       <p class="section-tag"><i>06</i> Como fazemos</p>
       <div class="process__bar"><i id="processBar"></i></div>
     </div>
-    <div class="process__track" id="processTrack">
-      <article class="step">
-        <span class="step__num">01</span>
-        <div class="step__img"><img src="assets/img/processo-01.svg" alt="Hambúrguer artesanal sendo preparado"></div>
-        <h3>A carne</h3>
-        <p>Hambúrguer artesanal de 180 g, moldado na casa. É a mesma carne do Clássico e do Big Burguer — no segundo, dobrada.</p>
-      </article>
-      <article class="step">
-        <span class="step__num">02</span>
-        <div class="step__img"><img src="assets/img/processo-02.svg" alt="Hambúrguer na brasa"></div>
-        <h3>A brasa</h3>
-        <p>Tudo que é tradicional vai para a brasa. É de onde vem o gosto de defumado que chapa nenhuma consegue imitar.</p>
-      </article>
-      <article class="step">
-        <span class="step__num">03</span>
-        <div class="step__img"><img src="assets/img/processo-03.svg" alt="Montagem do lanche"></div>
-        <h3>A montagem</h3>
-        <p>Pão de brioche selado, queijo sobre a carne ainda quente e maionese artesanal em cima e embaixo. Sai fechado, sai na hora.</p>
-      </article>
-      <article class="step step--end">
-        <span class="step__num">04</span>
-        <h3>E aí é com você.</h3>
-        <p>Come com a mão. Não corta ao meio. Se for o Meio Quilo, chama reforço.</p>
-        <a href="#pedido" class="btn" data-nav>Peça agora</a>
-      </article>
-    </div>
+
   </div>
 </section>
 

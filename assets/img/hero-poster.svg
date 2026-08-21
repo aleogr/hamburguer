@@ -21,5 +21,5 @@
     <path d="M37 1006 V1043 H74"/>
     <path d="M1883 1006 V1043 H1846"/>
   </g>
-  <g text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" transform="translate(74, 1028)"><text font-size="23" font-weight="700" letter-spacing="4.6" fill="#f4efe6" opacity="0.55">HERO / POSTER DO VIDEO</text><text y="34" font-size="16" letter-spacing="3.7" fill="#f4efe6" opacity="0.3">PLACEHOLDER · 1920×1080</text></g>
+  <g text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" transform="translate(1846, 89)"><text font-size="23" font-weight="700" letter-spacing="4.6" fill="#f4efe6" opacity="0.55">HERO / POSTER DO VIDEO</text><text y="34" font-size="16" letter-spacing="3.7" fill="#f4efe6" opacity="0.3">PLACEHOLDER · 1920×1080</text></g>
 </svg>

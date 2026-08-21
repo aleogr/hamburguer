@@ -79,7 +79,7 @@ tools/build-standalone.py   empacota tudo num HTML só (dist/, fora do git)
 | 6 | Tradicionais | Grade de sete cartões |
 | 7 | Combos | Grade de nove combos + porções |
 | 8 | Bebidas | Lista de preços em duas colunas |
-| 9 | Como fazemos | A página trava e os passos deslizam na horizontal |
+| 9 | Como fazemos | Tira horizontal: cada passo ocupa uma tela, com a foto de fundo, e desliza para o lado conforme a página desce |
 | 10 | A casa | Texto e foto em parallax |
 | 11 | Peça agora | Vídeo de fundo, contatos e captura de e-mail |
 
@@ -106,7 +106,13 @@ python3 tools/extract-cardapio.py caminho/para/cardapio.pdf
 
 Ainda são placeholders em SVG, gerados por `tools/gen-placeholders.py`:
 `processo-01/02/03`, `sobre-equipe`, `casa-salao`, `casa-balcao` e
-`hero-poster`.
+`hero-poster`. Os que ficam atrás de texto levam a legenda no canto superior
+direito, porque no site o texto sempre mora embaixo e à esquerda.
+
+Os três de `processo-*` aparecem em tela cheia e são os que mais pedem foto
+real: uma da carne sendo moldada, uma da brasa e uma da montagem, em paisagem
+16:9, com o assunto no centro ou à direita (a esquerda fica coberta pelo
+texto).
 
 **Vídeos.** Veja `assets/video/README.md` — tem os comandos de `ffmpeg`
 prontos. Enquanto não houver vídeo, o hero mostra uma brasa animada em canvas.
@@ -153,6 +159,27 @@ Quem não recebe esse tratamento:
   movimento seria o oposto do combinado: ali a seção rola normalmente.
 - **Campos de formulário.** Com o foco num input, as setas seguem movendo o
   cursor.
+
+## Como funciona a tira do "como fazemos"
+
+Mesma ideia do palco, no eixo X: o bloco fica `sticky` e uma tira de painéis de
+tela cheia (`.frame`, cada um com `flex: 0 0 100vw`) desliza no eixo horizontal
+conforme a página desce. A altura da seção é calculada no JS a partir da
+largura total da tira — é ela que "segura" o scroll.
+
+Duas constantes no módulo `processScroll` do `main.js`:
+
+| Constante | Para quê |
+|---|---|
+| `RITMO` | quanto de rolagem vertical custa a tira inteira. Em `1` os quatro painéis exigiriam quase cinco telas de scroll; em `0.6` a tira anda um pouco mais rápido que o dedo, sem ficar brusca |
+| `FOLGA` | o quanto a foto se desloca dentro do painel. Ela é 112% da largura, e andar menos que o painel é o que dá a profundidade |
+
+O texto de cada painel acende e apaga conforme ele entra e sai do
+enquadramento. Sem isso, no meio da passagem apareciam dois textos cortados ao
+mesmo tempo — no celular, onde o painel é estreito, ficava ilegível.
+
+Com `prefers-reduced-motion` não há tira nem travamento: os quatro passos
+viram uma pilha vertical comum.
 
 ## Paleta
 
