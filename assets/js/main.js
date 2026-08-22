@@ -17,8 +17,9 @@
    12. Parallax
    13. Processo: scroll horizontal travado
    14. Vídeos de fundo (+ fallback animado no canvas)
-   15. Formulário e miudezas
-   16. Loop de scroll (rAF)
+   15. Carrinho e pedido pelo WhatsApp
+   16. Formulário e miudezas
+   17. Loop de scroll (rAF)
    ========================================================================== */
 (function () {
   "use strict";
@@ -374,6 +375,8 @@
     };
 
     var tenta = function (dir, e) {
+      // com o pedido ou o menu abertos, a rolagem não é nossa
+      if (document.body.classList.contains("is-locked")) return;
       if (!noComando()) return;
       if (travado) { e.preventDefault(); destravaNoSilencio(); return; }
       var destino = proximoAlvo(dir);
@@ -585,7 +588,278 @@
     });
   })();
 
-  /* ── 15. Formulário e miudezas ────────────────────────────────────────── */
+  /* ── 15. Carrinho e pedido pelo WhatsApp ──────────────────────────────── */
+  /* Sem servidor: o pedido vira uma mensagem de texto e o wa.me abre o
+     WhatsApp já com ela escrita. O preço de cada item é lido do próprio
+     cardápio na tela — assim não existe uma segunda lista de preços para
+     desencontrar da primeira. */
+  (function carrinho() {
+    var fab = $("#cartFab"), gaveta = $("#cart"), lista = $("#cartLista");
+    var form = $("#cartForm");
+    if (!fab || !gaveta || !lista || !form) return;
+
+    var CHAVE = "mana:pedido";
+    var TELEFONE = document.body.getAttribute("data-whatsapp") || "";
+    var PLACEHOLDER = "5500000000000";
+
+    var moeda = function (centavos) {
+      try {
+        return (centavos / 100).toLocaleString("pt-BR",
+          { style: "currency", currency: "BRL" });
+      } catch (e) {
+        return "R$ " + (centavos / 100).toFixed(2).replace(".", ",");
+      }
+    };
+
+    var emCentavos = function (texto) {
+      var n = String(texto).replace(/[^\d,]/g, "").replace(",", ".");
+      return Math.round(parseFloat(n) * 100) || 0;
+    };
+
+    var apelido = function (nome) {
+      return nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    };
+
+    // ── catálogo, montado a partir do que está escrito na página ─────────
+    var catalogo = {};
+    $$("[data-produto]").forEach(function (el) {
+      var titulo = $("h3", el), rotulo = $("span", el);
+      var nome, extra;
+      if (titulo) {
+        nome = titulo.textContent.trim();
+      } else {
+        extra = $("i", rotulo) ? $("i", rotulo).textContent.trim() : "";
+        nome = rotulo.textContent.replace(extra, "").trim();
+        if (extra) nome += " (" + extra + ")";
+      }
+      var etiqueta = $(".panel__price, .price, b", el);
+      if (!nome || !etiqueta) return;
+
+      var id = apelido(nome);
+      catalogo[id] = { nome: nome, preco: emCentavos(etiqueta.textContent) };
+
+      var botao = $("[data-add]", el);
+      if (!botao) return;
+      botao.setAttribute("aria-label", "Adicionar " + nome + " ao pedido");
+      var rotuloOriginal = botao.textContent;
+      botao.addEventListener("click", function () {
+        soma(id, 1);
+        botao.classList.add("is-feito");
+        if (rotuloOriginal.length > 2) botao.textContent = "Adicionado";
+        window.setTimeout(function () {
+          botao.classList.remove("is-feito");
+          botao.textContent = rotuloOriginal;
+        }, 1200);
+      });
+    });
+
+    // ── estado ───────────────────────────────────────────────────────────
+    var pedido = {};
+    try {
+      var salvo = JSON.parse(window.localStorage.getItem(CHAVE) || "{}");
+      Object.keys(salvo).forEach(function (id) {
+        // um item que saiu do cardápio não pode voltar pelo armazenamento
+        if (catalogo[id] && salvo[id] > 0) pedido[id] = Math.min(salvo[id], 99);
+      });
+    } catch (e) { /* modo privado, cota cheia: segue sem histórico */ }
+
+    var guarda = function () {
+      try { window.localStorage.setItem(CHAVE, JSON.stringify(pedido)); }
+      catch (e) { /* idem */ }
+    };
+
+    var itens = function () {
+      return Object.keys(pedido).map(function (id) {
+        return { id: id, qtd: pedido[id], nome: catalogo[id].nome,
+                 preco: catalogo[id].preco };
+      });
+    };
+    var total = function () {
+      return itens().reduce(function (a, i) { return a + i.preco * i.qtd; }, 0);
+    };
+    var quantos = function () {
+      return itens().reduce(function (a, i) { return a + i.qtd; }, 0);
+    };
+
+    var soma = function (id, delta) {
+      if (!catalogo[id]) return;
+      pedido[id] = Math.max(0, Math.min(99, (pedido[id] || 0) + delta));
+      if (!pedido[id]) delete pedido[id];
+      guarda();
+      desenha();
+      if (delta > 0 && !aberto) {
+        fab.classList.add("is-pulsando");
+        window.setTimeout(function () { fab.classList.remove("is-pulsando"); }, 500);
+      }
+    };
+
+    // ── desenho ──────────────────────────────────────────────────────────
+    var vazio = $("#cartVazio"), esvaziar = $("#cartEsvaziar");
+    var desenha = function () {
+      var linhas = itens(), n = quantos();
+
+      $("#cartCount").textContent = n;
+      fab.hidden = n === 0;
+      fab.setAttribute("aria-label", n === 1 ? "Meu pedido, 1 item"
+                                             : "Meu pedido, " + n + " itens");
+      vazio.hidden = n > 0;
+      esvaziar.hidden = n === 0;
+      form.hidden = n === 0;
+      $("#cartTotal").textContent = moeda(total());
+
+      lista.textContent = "";
+      linhas.forEach(function (i) {
+        var li = document.createElement("li");
+
+        var nome = document.createElement("span");
+        nome.className = "cart__nome";
+        nome.textContent = i.nome;
+
+        var unit = document.createElement("span");
+        unit.className = "cart__unit";
+        unit.textContent = i.qtd + " × " + moeda(i.preco) + " = " + moeda(i.preco * i.qtd);
+
+        var ctrl = document.createElement("div");
+        ctrl.className = "cart__qtd";
+        var passo = function (rotulo, delta, descricao) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.textContent = rotulo;
+          b.setAttribute("aria-label", descricao + " " + i.nome);
+          b.addEventListener("click", function () { soma(i.id, delta); });
+          return b;
+        };
+        var qtd = document.createElement("b");
+        qtd.textContent = i.qtd;
+        ctrl.appendChild(passo("\u2212", -1, "Tirar um"));
+        ctrl.appendChild(qtd);
+        ctrl.appendChild(passo("+", 1, "Somar um"));
+
+        li.appendChild(nome);
+        li.appendChild(unit);
+        li.appendChild(ctrl);
+        lista.appendChild(li);
+      });
+    };
+
+    esvaziar.addEventListener("click", function () {
+      pedido = {}; guarda(); desenha();
+    });
+
+    // ── abre e fecha ─────────────────────────────────────────────────────
+    var aberto = false, focoAnterior = null;
+    var abre = function (estado) {
+      aberto = estado;
+      fab.setAttribute("aria-expanded", String(estado));
+      document.body.classList.toggle("is-locked", estado);
+      if (estado) {
+        focoAnterior = document.activeElement;
+        gaveta.hidden = false;
+        window.requestAnimationFrame(function () {
+          gaveta.classList.add("is-open");
+          $(".cart__x", gaveta).focus();
+        });
+      } else {
+        gaveta.classList.remove("is-open");
+        window.setTimeout(function () { if (!aberto) gaveta.hidden = true; }, 500);
+        if (focoAnterior && focoAnterior.focus) focoAnterior.focus();
+      }
+    };
+
+    fab.addEventListener("click", function () { abre(true); });
+    $$("[data-cart-fechar]").forEach(function (b) {
+      b.addEventListener("click", function () { abre(false); });
+    });
+    document.addEventListener("keydown", function (e) {
+      if (!aberto) return;
+      if (e.key === "Escape") { abre(false); return; }
+      if (e.key !== "Tab") return;
+      // prende o Tab dentro da gaveta enquanto ela está aberta
+      var focaveis = $$("button, input, select, textarea, a[href]", gaveta)
+        .filter(function (el) { return el.offsetParent !== null; });
+      if (!focaveis.length) return;
+      var primeiro = focaveis[0], ultimo = focaveis[focaveis.length - 1];
+      if (e.shiftKey && document.activeElement === primeiro) {
+        e.preventDefault(); ultimo.focus();
+      } else if (!e.shiftKey && document.activeElement === ultimo) {
+        e.preventDefault(); primeiro.focus();
+      }
+    });
+    // outras partes da página consultam isto antes de mexer na rolagem
+    window.__pedidoAberto = function () { return aberto; };
+
+    // ── campos que dependem de outros ────────────────────────────────────
+    var campoEndereco = $("#campoEndereco"), campoTroco = $("#campoTroco");
+    var pagamento = $("#cliPagamento");
+    var atualizaCampos = function () {
+      var entrega = $("input[name=entrega]:checked", form).value !== "Retirada no balcão";
+      campoEndereco.hidden = !entrega;
+      campoTroco.hidden = pagamento.value !== "Dinheiro";
+    };
+    $$("input[name=entrega]", form).forEach(function (r) {
+      r.addEventListener("change", atualizaCampos);
+    });
+    pagamento.addEventListener("change", atualizaCampos);
+    atualizaCampos();
+
+    // ── a mensagem ───────────────────────────────────────────────────────
+    var montaMensagem = function (dados) {
+      var l = ["*Pedido — Hamburgueria Maná*", ""];
+      itens().forEach(function (i) {
+        l.push(i.qtd + "x " + i.nome + " — " + moeda(i.preco * i.qtd));
+      });
+      l.push("", "*Total: " + moeda(total()) + "*", "");
+      l.push("*Nome:* " + dados.nome);
+      l.push("*Retirada/entrega:* " + dados.entrega);
+      if (dados.endereco) l.push("*Endereço:* " + dados.endereco);
+      l.push("*Pagamento:* " + dados.pagamento);
+      if (dados.troco) l.push("*Troco para:* " + dados.troco);
+      if (dados.obs) l.push("*Observações:* " + dados.obs);
+      return l.join("\n");
+    };
+
+    var erro = $("#cartErro");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      erro.textContent = "";
+
+      if (!quantos()) { erro.textContent = "Escolha pelo menos um item."; return; }
+
+      var dados = {
+        nome: $("#cliNome").value.trim(),
+        entrega: $("input[name=entrega]:checked", form).value,
+        endereco: campoEndereco.hidden ? "" : $("#cliEndereco").value.trim(),
+        pagamento: pagamento.value,
+        troco: campoTroco.hidden ? "" : $("#cliTroco").value.trim(),
+        obs: $("#cliObs").value.trim()
+      };
+
+      if (!dados.nome) {
+        erro.textContent = "Falta o seu nome.";
+        $("#cliNome").focus(); return;
+      }
+      if (!campoEndereco.hidden && !dados.endereco) {
+        erro.textContent = "Falta o endereço da entrega.";
+        $("#cliEndereco").focus(); return;
+      }
+      if (!TELEFONE || TELEFONE === PLACEHOLDER) {
+        erro.textContent = "O número de WhatsApp ainda não foi configurado neste site.";
+        return;
+      }
+
+      // wa.me carrega o texto na própria URL; um pedido do cardápio inteiro dá
+      // cerca de 1,5 mil caracteres, bem dentro do que os navegadores aceitam
+      var url = "https://wa.me/" + TELEFONE + "?text=" +
+                encodeURIComponent(montaMensagem(dados));
+      var janela = window.open(url, "_blank", "noopener");
+      if (!janela) window.location.href = url;   // bloqueador de pop-up
+    });
+
+    desenha();
+  })();
+
+  /* ── 16. Formulário e miudezas ────────────────────────────────────────── */
   (function form() {
     var f = $("#orderForm"), msg = $("#orderMsg");
     if (!f) return;
@@ -606,7 +880,7 @@
   var year = $("#year");
   if (year) year.textContent = new Date().getFullYear();
 
-  /* ── 16. Loop de scroll ───────────────────────────────────────────────── */
+  /* ── 17. Loop de scroll ───────────────────────────────────────────────── */
   (function loop() {
     var pending = false;
     var run = function () {

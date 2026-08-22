@@ -18,7 +18,9 @@
 <link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<!-- TODO: troque 5500000000000 pelo WhatsApp real da Maná (código do país +
+     DDD + número, só dígitos). Ele aparece aqui e nos links wa.me abaixo. -->
+<body data-whatsapp="5500000000000">
 
 <!-- ══ PRELOADER ══════════════════════════════════════════════ -->
 <div class="loader" id="loader" aria-hidden="true">
@@ -183,57 +185,63 @@
       <p class="stage__hint">Uma rolada, um lanche — role para ver os seis</p>
     </header>
 
-    <article class="panel" data-menu-item="classico">
+    <article class="panel" data-menu-item="classico" data-produto>
       <div class="panel__inner">
         <p class="panel__index">01 — 06</p>
         <div class="panel__top"><h3>Clássico Maná</h3><span class="panel__price">R$ 34,00</span></div>
         <p class="panel__desc">Entre o macio brioche selado e a força do hambúrguer artesanal, a frescura da horta se encontra com a suavidade do cheddar e a alma da maionese artesanal. Assim se revela o Clássico Maná.</p>
         <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li><li>Bacon crocante</li><li>Maionese artesanal</li><li>Alface e tomate</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar ao pedido</button>
       </div>
     </article>
 
-    <article class="panel" data-menu-item="hothoney">
+    <article class="panel" data-menu-item="hothoney" data-produto>
       <div class="panel__inner">
         <p class="panel__index">02 — 06</p>
         <div class="panel__top"><h3>Hot Honey Bacon</h3><span class="panel__price">R$ 40,00</span></div>
         <p class="panel__desc">Combinando um delicioso hambúrguer artesanal com um molho de bacon com mel e uma pitada de pimenta para um sabor inigualável, temos o Hot Honey Bacon.</p>
         <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li><li>Molho de bacon, mel e pimenta</li><li>Alfaces frescas</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar ao pedido</button>
       </div>
     </article>
 
-    <article class="panel" data-menu-item="queijos">
+    <article class="panel" data-menu-item="queijos" data-produto>
       <div class="panel__inner">
         <p class="panel__index">03 — 06</p>
         <div class="panel__top"><h3>Queijo &amp; Mais Queijo</h3><span class="panel__price">R$ 38,00</span></div>
         <p class="panel__desc">Combinando a suculência do hambúrguer artesanal com a intensidade dos queijos e o toque da cebola caramelizada, surge o irresistível.</p>
         <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li><li>Queijo muçarela</li><li>Queijo catupiry</li><li>Cebola caramelizada</li><li>Maionese artesanal</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar ao pedido</button>
       </div>
     </article>
 
-    <article class="panel" data-menu-item="texas">
+    <article class="panel" data-menu-item="texas" data-produto>
       <div class="panel__inner">
         <p class="panel__index">04 — 06</p>
         <div class="panel__top"><h3>Texas Burguer</h3><span class="panel__price">R$ 34,00</span></div>
         <p class="panel__desc">Uma referência internacional de um clássico hambúrguer americano: um molho conislau que leva repolho roxo, cenoura, maionese artesanal e um tempero que só a Maná tem.</p>
         <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo cheddar</li><li>Maionese artesanal</li><li>Barbecue artesanal levemente apimentado</li><li>Molho conislau</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar ao pedido</button>
       </div>
     </article>
 
-    <article class="panel" data-menu-item="romeu">
+    <article class="panel" data-menu-item="romeu" data-produto>
       <div class="panel__inner">
         <p class="panel__index">05 — 06</p>
         <div class="panel__top"><h3>Romeu e Julieta</h3><span class="panel__price">R$ 38,00</span></div>
         <p class="panel__desc">A exclusividade de um lanche que você só encontra aqui. Hambúrguer artesanal feito na brasa, um queijo colonial e uma geleia de goiabada artesanal: um mix de sabores que vai elevar seu paladar a outro nível.</p>
         <ul class="ings"><li>Pão de brioche</li><li>Hambúrguer artesanal 180 g</li><li>Queijo colonial</li><li>Geleia de goiabada artesanal</li><li>Maionese artesanal</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar ao pedido</button>
       </div>
     </article>
 
-    <article class="panel" data-menu-item="big">
+    <article class="panel" data-menu-item="big" data-produto>
       <div class="panel__inner">
         <p class="panel__index">06 — 06</p>
         <div class="panel__top"><h3>Big Burguer</h3><span class="panel__price">R$ 48,00</span></div>
         <p class="panel__desc">Este lanche é para você que se garante em um grande hambúrguer.</p>
         <ul class="ings"><li>Pão de brioche</li><li>2 hambúrgueres artesanais 180 g</li><li>Queijo cheddar</li><li>Bacon crocante</li><li>Maionese artesanal</li><li>Alfaces frescas</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar ao pedido</button>
       </div>
     </article>
   </div>
@@ -259,34 +267,41 @@
     <h2 class="h-lg reveal">O de sempre,<br>na brasa.</h2>
 
     <div class="cards">
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>X-Burguer</h3><span class="price">R$ 20,00</span></div>
         <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer artesanal na brasa</li><li>Presunto</li><li>Queijo muçarela</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>X-Salada</h3><span class="price">R$ 25,00</span></div>
         <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer artesanal na brasa</li><li>Milho e ervilha</li><li>Alface e tomate</li><li>Presunto</li><li>Queijo muçarela</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>X-Egg</h3><span class="price">R$ 26,00</span></div>
         <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer artesanal na brasa</li><li>Ovo</li><li>Milho e ervilha</li><li>Alface e tomate</li><li>Presunto</li><li>Queijo muçarela</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>X-Calabresa</h3><span class="price">R$ 29,00</span></div>
         <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer artesanal na brasa</li><li>Calabresa</li><li>Milho e ervilha</li><li>Alface e tomate</li><li>Presunto</li><li>Queijo muçarela</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>X-Bacon</h3><span class="price">R$ 30,00</span></div>
         <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer artesanal na brasa</li><li>Bacon em cubos</li><li>Milho e ervilha</li><li>Alface e tomate</li><li>Presunto</li><li>Queijo muçarela</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>X-Tudo</h3><span class="price">R$ 35,00</span></div>
         <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer artesanal na brasa</li><li>Bacon em cubos</li><li>Calabresa</li><li>Ovo</li><li>Milho e ervilha</li><li>Alface e tomate</li><li>Presunto</li><li>Queijo muçarela</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card card--wide reveal">
+      <article class="card card--wide reveal" data-produto >
         <div class="card__top"><h3>X-Meio Quilo</h3><span class="price">R$ 55,00</span></div>
         <p class="card__desc">Sim, um hambúrguer de respeito! Pesa mais de 500 g, feito com extrema fartura.</p>
         <ul class="ings"><li>Pão de hambúrguer</li><li>Hambúrguer 180 g artesanal na brasa</li><li>Bacon em cubos</li><li>Calabresa</li><li>Ovo</li><li>Salsicha</li><li>Queijo catupiry</li><li>Milho e ervilha</li><li>Alface e tomate</li><li>Presunto</li><li>2 fatias de queijo muçarela</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
     </div>
   </div>
@@ -299,49 +314,58 @@
     <h2 class="h-lg reveal">Lanche, batata<br>e bebida.</h2>
 
     <div class="cards cards--tight">
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>Combo Salada</h3><span class="price">R$ 35,00</span></div>
         <ul class="ings"><li>1 X-Salada</li><li>1 batata 150 g</li><li>1 refrigerante lata</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>Combo Bacon</h3><span class="price">R$ 42,00</span></div>
         <ul class="ings"><li>1 X-Bacon</li><li>1 batata 150 g</li><li>1 refrigerante lata</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>Combo Clássico</h3><span class="price">R$ 45,00</span></div>
         <ul class="ings"><li>1 Clássico Maná</li><li>1 batata 150 g</li><li>1 refrigerante lata</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>Combo Texas</h3><span class="price">R$ 50,00</span></div>
         <ul class="ings"><li>1 Texas Burguer</li><li>1 batata 150 g</li><li>1 refrigerante lata</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>Combo Casal</h3><span class="price">R$ 68,00</span></div>
         <ul class="ings"><li>2 X-Salada</li><li>1 batata 250 g</li><li>2 refrigerantes lata</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>Combo Duplo Texas</h3><span class="price">R$ 84,00</span></div>
         <ul class="ings"><li>2 Texas Burguer</li><li>1 batata 250 g</li><li>2 refrigerantes lata</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>Combo Perfeito</h3><span class="price">R$ 86,00</span></div>
         <ul class="ings"><li>1 X-Tudo</li><li>1 X-Bacon</li><li>1 batata 250 g</li><li>2 refrigerantes lata</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card reveal">
+      <article class="card reveal" data-produto >
         <div class="card__top"><h3>Combo Texas Honey</h3><span class="price">R$ 92,00</span></div>
         <ul class="ings"><li>1 Texas Burguer</li><li>1 Hot Honey Bacon</li><li>1 batata 250 g</li><li>2 refrigerantes lata</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
-      <article class="card card--hero reveal">
+      <article class="card card--hero reveal" data-produto >
         <div class="card__top"><h3>Combo Galera</h3><span class="price">R$ 130,00</span></div>
         <ul class="ings"><li>4 X-Salada</li><li>1 batata 500 g</li><li>1 refrigerante 2 litros</li></ul>
+        <button class="btn-add" type="button" data-add>Adicionar</button>
       </article>
     </div>
 
     <div class="sides reveal">
       <h3>Porções</h3>
       <ul class="pricelist">
-        <li><span>Porção de batata M <i>250 g</i></span><b>R$ 18,00</b></li>
-        <li><span>Porção de batata G <i>500 g</i></span><b>R$ 25,00</b></li>
+        <li data-produto><span>Porção de batata M <i>250 g</i></span><b>R$ 18,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
+        <li data-produto><span>Porção de batata G <i>500 g</i></span><b>R$ 25,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
       </ul>
     </div>
   </div>
@@ -355,20 +379,20 @@
 
     <div class="drinks">
       <ul class="pricelist reveal">
-        <li><span>Coca-Cola lata 350</span><b>R$ 6,00</b></li>
-        <li><span>Coca-Cola 600</span><b>R$ 8,00</b></li>
-        <li><span>Coca-Cola 1 litro</span><b>R$ 10,00</b></li>
-        <li><span>Coca-Cola 2 litros</span><b>R$ 15,00</b></li>
-        <li><span>Guaraná 2 litros</span><b>R$ 15,00</b></li>
-        <li><span>Refrigerante Fys</span><b>R$ 6,00</b></li>
-        <li><span>Suco Prats 300 ml</span><b>R$ 8,00</b></li>
-        <li><span>Suco Prats 900 ml</span><b>R$ 16,00</b></li>
+        <li data-produto><span>Coca-Cola lata 350</span><b>R$ 6,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
+        <li data-produto><span>Coca-Cola 600</span><b>R$ 8,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
+        <li data-produto><span>Coca-Cola 1 litro</span><b>R$ 10,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
+        <li data-produto><span>Coca-Cola 2 litros</span><b>R$ 15,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
+        <li data-produto><span>Guaraná 2 litros</span><b>R$ 15,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
+        <li data-produto><span>Refrigerante Fys</span><b>R$ 6,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
+        <li data-produto><span>Suco Prats 300 ml</span><b>R$ 8,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
+        <li data-produto><span>Suco Prats 900 ml</span><b>R$ 16,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
       </ul>
       <ul class="pricelist reveal">
-        <li><span>Heineken long neck</span><b>R$ 12,00</b></li>
-        <li><span>Corona long neck</span><b>R$ 12,00</b></li>
-        <li><span>Sol long neck</span><b>R$ 10,00</b></li>
-        <li><span>Amstel Ultra</span><b>R$ 8,00</b></li>
+        <li data-produto><span>Heineken long neck</span><b>R$ 12,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
+        <li data-produto><span>Corona long neck</span><b>R$ 12,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
+        <li data-produto><span>Sol long neck</span><b>R$ 10,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
+        <li data-produto><span>Amstel Ultra</span><b>R$ 8,00</b><button class="btn-add btn-add--mini" type="button" data-add>+</button></li>
       </ul>
     </div>
   </div>
@@ -532,6 +556,74 @@
     </div>
   </div>
 </footer>
+
+<!-- ══ CARRINHO ══════════════════════════════════════════════ -->
+<button class="cart-fab" id="cartFab" type="button" aria-controls="cart" aria-expanded="false" hidden>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  <span>Meu pedido</span>
+  <b class="cart-fab__count" id="cartCount">0</b>
+</button>
+
+<div class="cart" id="cart" role="dialog" aria-modal="true" aria-labelledby="cartTitulo" hidden>
+  <div class="cart__fundo" data-cart-fechar></div>
+  <div class="cart__painel">
+    <header class="cart__topo">
+      <h2 id="cartTitulo">Meu pedido</h2>
+      <button class="cart__x" type="button" data-cart-fechar aria-label="Fechar o pedido">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+
+    <p class="cart__vazio" id="cartVazio">Ainda não tem nada aqui. Escolha alguma coisa no cardápio.</p>
+    <ul class="cart__lista" id="cartLista"></ul>
+
+    <button class="cart__esvaziar" id="cartEsvaziar" type="button" hidden>Esvaziar pedido</button>
+
+    <form class="cart__form" id="cartForm" novalidate>
+      <div class="cart__total"><span>Total</span><b id="cartTotal">R$ 0,00</b></div>
+
+      <label class="campo">
+        <span>Seu nome</span>
+        <input type="text" id="cliNome" autocomplete="name" required>
+      </label>
+
+      <fieldset class="campo campo--opcoes">
+        <legend>Como prefere?</legend>
+        <label><input type="radio" name="entrega" value="Entrega" checked> Entrega</label>
+        <label><input type="radio" name="entrega" value="Retirada no balcão"> Retirar no balcão</label>
+      </fieldset>
+
+      <label class="campo" id="campoEndereco">
+        <span>Endereço com número</span>
+        <input type="text" id="cliEndereco" autocomplete="street-address">
+      </label>
+
+      <label class="campo">
+        <span>Pagamento</span>
+        <select id="cliPagamento">
+          <option>Pix</option>
+          <option>Cartão na entrega</option>
+          <option>Dinheiro</option>
+        </select>
+      </label>
+
+      <label class="campo" id="campoTroco" hidden>
+        <span>Precisa de troco para quanto?</span>
+        <input type="text" id="cliTroco" inputmode="decimal" placeholder="Ex.: 100">
+      </label>
+
+      <label class="campo">
+        <span>Observações</span>
+        <textarea id="cliObs" rows="2" placeholder="Ex.: sem cebola no X-Salada"></textarea>
+      </label>
+
+      <p class="cart__erro" id="cartErro" role="status" aria-live="polite"></p>
+      <button class="btn btn--lg cart__enviar" type="submit">Enviar pedido no WhatsApp</button>
+      <!-- TODO: se houver taxa de entrega ou pedido mínimo, diga aqui. -->
+      <p class="cart__nota">O pedido abre no WhatsApp já escrito. Taxa de entrega e tempo de espera são confirmados por lá.</p>
+    </form>
+  </div>
+</div>
 
 <script src="assets/js/main.js"></script>
 </body>

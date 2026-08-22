@@ -42,6 +42,7 @@ textura de madeira e a chama.
 
 | Onde | O quê |
 |---|---|
+| **Número do WhatsApp** | `5500000000000` — é para onde o pedido é enviado. Sem ele o carrinho recusa o envio |
 | Seção "Peça agora" | Endereço, horário, telefone e WhatsApp |
 | Rodapé e menu mobile | Instagram, WhatsApp, telefone |
 | Seção "A casa" | O texto sobre a hamburgueria |
@@ -82,6 +83,9 @@ tools/build-standalone.py   empacota tudo num HTML só (dist/, fora do git)
 | 9 | Como fazemos | Tira horizontal: cada passo ocupa uma tela, com a foto de fundo, e desliza para o lado conforme a página desce |
 | 10 | A casa | Texto e foto em parallax |
 | 11 | Peça agora | Vídeo de fundo, contatos e captura de e-mail |
+
+Em cima disso tudo há um **carrinho**: cada item do cardápio tem um botão de
+adicionar, e o pedido sai pronto no WhatsApp.
 
 Outros detalhes: preloader com contador, cursor que cresce sobre os itens, menu
 de tela cheia no mobile, header que some ao descer e volta ao subir, e o fundo
@@ -193,6 +197,57 @@ Amostrada direto do PDF e definida em tokens no topo do `style.css`:
 
 Trocar esses valores muda o site inteiro.
 
+## Pedido pelo WhatsApp
+
+O visitante monta o carrinho no site e o pedido chega escrito no WhatsApp da
+casa. É o mesmo caminho que Vendizap, Goomer e afins fazem, e aqui não precisa
+de servidor: o `wa.me` aceita o texto na própria URL.
+
+```
+https://wa.me/<numero>?text=<pedido já formatado>
+```
+
+A mensagem sai assim:
+
+```
+*Pedido — Hamburgueria Maná*
+
+2x X-Bacon — R$ 60,00
+1x Coca-Cola lata 350 — R$ 6,00
+
+*Total: R$ 66,00*
+
+*Nome:* Alexandre
+*Retirada/entrega:* Entrega
+*Endereço:* Rua das Palmeiras, 42
+*Pagamento:* Dinheiro
+*Troco para:* 100
+*Observações:* sem cebola
+```
+
+**O preço vem do próprio cardápio na tela.** O carrinho lê o valor de cada
+item do HTML onde ele já está escrito, então não existe uma segunda lista de
+preços para desencontrar da primeira: mudou no cardápio, mudou no pedido.
+
+Outros detalhes:
+
+- O carrinho fica no `localStorage`, então sobrevive a recarregar a página.
+  Um item que saiu do cardápio não volta pelo armazenamento.
+- Endereço só aparece em entrega; troco só aparece em dinheiro.
+- Se o número do WhatsApp ainda for o placeholder, o envio é recusado com
+  aviso na tela — melhor do que abrir uma conversa com um número inexistente.
+- No pior caso (o cardápio inteiro em dobro, 77 itens) a URL fica com ~2,4 mil
+  caracteres, bem dentro do que os navegadores aceitam.
+
+### O que isso não é
+
+Não é um sistema de pedidos. Não há estoque, pagamento, confirmação nem
+acompanhamento: o pedido é uma mensagem de texto que alguém precisa ler e
+responder. Taxa de entrega, tempo de espera e pedido mínimo ficam por conta da
+conversa — está escrito na própria gaveta do carrinho. Se um dia isso virar
+volume demais para atender no braço, aí sim vale um Vendizap da vida ou um
+sistema de verdade.
+
 ## O que custa caro num site assim
 
 A primeira versão engasgava na tira do "como fazemos". Medindo o intervalo
@@ -225,6 +280,13 @@ Quatro causas, em ordem de tamanho:
    texto dos painéis tinha `opacity` e `transform` recalculados a cada quadro,
    o que invalidava a camada da tira inteira. Virou uma classe trocada só na
    passagem, com a transição por conta do CSS.
+
+Uma terceira, de outro tipo, veio depois: ao inserir o CSS do carrinho eu comi
+o cabeçalho de um comentário, e o navegador passou a **descartar em silêncio**
+o bloco `@media (max-width:1024px)` inteiro — o site perdeu os ajustes de
+tablet e celular sem nenhum erro aparecer em lugar nenhum. Por isso os testes
+agora conferem se o número de `@media` escritos no arquivo bate com o que o
+navegador realmente parseou.
 
 Duas lições que valem para as próximas mudanças: **filtro em elemento que se
 mexe é caro**, e **quanto menos coisa mudar dentro de um elemento
